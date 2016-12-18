@@ -25,7 +25,7 @@ _test_validate = [
     "response, expected",
     _test_validate,
 )
-def test_validate(response, expected):
+def test_validate_response(response, expected):
     res = True
     try:
         validate_response(
