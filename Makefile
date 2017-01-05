@@ -214,9 +214,6 @@ list-package: site-packages
 	@echo "======================================================"
 	ls -al $(PYTHON3_SITE_PACKAGES)/$(PACKAGE_PREFIX)*
 
-test:
-	py.test tests
-
 run-examples:
 	@echo "======================================================"
 	@echo run-examples $(PACKAGE)
@@ -227,5 +224,11 @@ run-examples:
 	@echo "======================================================"
 	@$(PYTHON3) examples/example_safe_cast.py
 
+test:
+	py.test tests
+
+coverage:
+	py.test --verbose --cov-report html --cov=requests_mv_integrations tests
+	
 list:
 	cat Makefile | grep "^[a-z]" | awk '{print $$1}' | sed "s/://g" | sort

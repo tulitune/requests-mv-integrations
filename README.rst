@@ -14,7 +14,7 @@ Overview
     * - tests
       - |travis| |coveralls|
     * - package
-      - |version| |supported-versions|
+      - |version| |supported-versions| |requires|
 
 .. |docs| image:: https://readthedocs.org/projects/requests-mv-integrations/badge/?style=flat
     :alt: Documentation Status
@@ -28,13 +28,13 @@ Overview
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/TuneLab/requests-mv-integrations
 
-.. |coveralls| image:: https://coveralls.io/repos/TuneLab/requests-mv-integrations/badge.svg?branch=master&service=github
+.. |coveralls| image:: https://coveralls.io/repos/github/TuneLab/requests-mv-integrations/badge.svg?branch=master
     :alt: Code Coverage Status
-    :target: https://coveralls.io/r/TuneLab/requests-mv-integrations
+    :target: https://coveralls.io/github/TuneLab/requests-mv-integrations?branch=master
 
 .. |requires| image:: https://requires.io/github/TuneLab/requests-mv-integrations/requirements.svg?branch=master
-    :alt: Requirements Status
-    :target: https://requires.io/github/TuneLab/requests-mv-integrations/requirements/?branch=master
+     :target: https://requires.io/github/TuneLab/requests-mv-integrations/requirements/?branch=master
+     :alt: Requirements Status
 
 .. |version| image:: https://img.shields.io/pypi/v/requests-mv-integrations.svg?style=flat
     :alt: PyPI Package latest release

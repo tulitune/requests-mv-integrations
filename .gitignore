@@ -52,6 +52,8 @@ sonar-project.properties
 
 # pytest
 .cache/*
+/htmlcov/
+/.coverage
 
 # distribution
 .eggs/*

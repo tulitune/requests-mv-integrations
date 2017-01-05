@@ -7,6 +7,7 @@ pprintpp>=0.2.3
 pyhttpstatus-utils>=0.1.0
 pytest
 pytest-mock
+pytest-cov
 python-dateutil>=2.5.3
 requests-toolbelt>=0.7.0
 requests>=2.12.1
