@@ -30,7 +30,9 @@ from requests_mv_integrations.support import (
     python_check_version,
     remove_bom,
     safe_dict,
+    validate_response,
 )
+from requests_mv_integrations.support.curl import command_line_request_curl
 from .request_mv_integration import (RequestMvIntegration)
 
 log = logging.getLogger(__name__)
@@ -857,7 +859,13 @@ class RequestMvIntegrationDownload(object):
             }
         )
 
-        self.validate_response(response=response, request_label="Stream CSV")
+        request_curl = command_line_request_curl(
+            request_method="GET",
+            request_url=request_url,
+            request_headers=request_headers,
+        )
+
+        validate_response(response=response, request_curl=request_curl, request_label="Stream CSV")
 
         response_content_type = response.headers.get('Content-Type', None)
         response_transfer_encoding = response.headers.get('Transfer-Encoding', None)
@@ -878,16 +886,16 @@ class RequestMvIntegrationDownload(object):
         csv_keys_list_len = None
         pre_str_line = None
 
-        for str_line in response.iter_lines(chunk_size=chunk_size, decode_unicode=decode_unicode):
+        for bytes_line in response.iter_lines(chunk_size=chunk_size, decode_unicode=decode_unicode):
 
-            if str_line:  # filter out keep-alive new chunks
+            if bytes_line:  # filter out keep-alive new chunks
                 line_count += 1
 
+                str_line = bytes_line.decode("utf-8")
                 if line_count == 1:
                     if remove_bom_length > 0:
                         str_line = str_line[remove_bom_length:]
-                    csv_keys_str = str_line
-                    csv_keys_list = csv_keys_str.split(csv_delimiter)
+                    csv_keys_list = str_line.split(csv_delimiter)
                     csv_keys_list = [csv_key.strip() for csv_key in csv_keys_list]
                     csv_keys_list_len = len(csv_keys_list)
                     continue

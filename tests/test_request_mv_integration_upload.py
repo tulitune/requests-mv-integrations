@@ -1,8 +1,7 @@
 import pytest
 import os
 
-from pytest_mock import mocker
-from ..resources.mockserver import run_server
+from .resources.mockserver import run_server
 
 from requests_mv_integrations import (
     RequestMvIntegrationUpload,
@@ -13,8 +12,8 @@ from requests_mv_integrations.exceptions import (
 )
 
 current_path = os.path.dirname(os.path.realpath(__file__))
-test_config_path = "%s/resources/uploadtestfile.json" % os.path.dirname(current_path)
-test_url = "http://localhost:8998/upload"
+test_config_path = "%s/tests/resources/uploadtestfile.json" % os.path.dirname(current_path)
+test_url = "http://localhost:8998/upload.json"
 
 @pytest.fixture
 def request_object():
