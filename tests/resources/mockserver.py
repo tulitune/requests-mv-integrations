@@ -4,7 +4,7 @@
 #  @namespace tune_mv_integration
 
 import pytest
-from os import curdir, sep
+from os import sep
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
@@ -44,6 +44,11 @@ class StaticFilesHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(f.read().encode())
                 f.close()
+            elif "status" in self.path:
+                status = self.path[-3:]
+                self.send_response(int(status))
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
 
         except IOError:
             self.send_error(404, 'File Not Found: %s' % self.path)
@@ -54,10 +59,9 @@ class StaticFilesHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", self.headers['Content-Type'])
                 self.end_headers()
-                self.wfile.write(json.dumps({"name":"avital"}))
-
         except IOError:
             self.send_error(404, 'File Not Found: %s' % self.path)
+
 
 @pytest.fixture(scope='module')
 def run_server(server_class=HTTPServer, handler_class=StaticFilesHandler):

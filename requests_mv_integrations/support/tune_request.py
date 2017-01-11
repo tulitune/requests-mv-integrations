@@ -28,7 +28,7 @@ class TuneRequest(metaclass=Singleton):
             retry_codes = set(REQUEST_RETRY_HTTP_STATUS_CODES)
 
         self.session.mount(
-            'http',
+            'http://',
             HTTPAdapter(
                 max_retries=Retry(
                     total=retry_tries,
