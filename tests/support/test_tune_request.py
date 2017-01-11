@@ -2,28 +2,39 @@ import pytest
 from ..resources.mockserver import run_server
 
 from requests_mv_integrations.support import (
-    TuneRequest
+    TuneRequest,
+    Singleton
 )
 
 from requests.exceptions import (
     RetryError
 )
 
+
+def setup_function():
+    Singleton._instances = {}
+
+
 def test_singleton():
-    object = TuneRequest()
-    object2 = TuneRequest(max_retries=2)
 
-    assert object.session is object2.session
+    request_object = TuneRequest()
+    request_object2 = TuneRequest()
+
+    assert request_object.session is request_object2.session
 
 
-def test_retries_throws_error(run_server):
-    obj = TuneRequest(retry_tries=1, retry_codes=[500])
+@pytest.mark.parametrize("retry_code", (500, 300, 200),)
+def test_retries_throws_error(retry_code, run_server):
+
+    obj = TuneRequest(retry_codes=[retry_code])
 
     with pytest.raises(RetryError):
-        obj.request('GET', "http://localhost:8998/status/500")
+        obj.request('GET', "http://localhost:8998/status/"+str(retry_code))
 
 
-def test_no_retries(run_server):
-    obj = TuneRequest(retry_tries=1, retry_codes=[500])
+@pytest.mark.parametrize("retry_code, status", ((501, 500), (300, 200),))
+def test_no_retries(retry_code, status, run_server):
 
-    obj.request('GET', "http://localhost:8998/status/501")
+    obj = TuneRequest(retry_codes=[retry_code])
+
+    obj.request('GET', "http://localhost:8998/status/"+str(status))
