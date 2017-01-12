@@ -27,26 +27,16 @@ class TuneRequest(metaclass=Singleton):
         if retry_codes is None:
             retry_codes = set(REQUEST_RETRY_HTTP_STATUS_CODES)
 
-        if retry_url_prefix is not None:
-            self.session.mount(retry_url_prefix, HTTPAdapter(
-                max_retries=Retry(
-                    total=retry_tries,
-                    backoff_factor=retry_backoff,
-                    status_forcelist=retry_codes,
-                ),
-            ))
-        else:
-
-            adapter = HTTPAdapter(
-                max_retries=Retry(
-                    total=retry_tries,
-                    backoff_factor=retry_backoff,
-                    status_forcelist=retry_codes,
-                )
+        adapter = HTTPAdapter(
+            max_retries=Retry(
+                total=retry_tries,
+                backoff_factor=retry_backoff,
+                status_forcelist=retry_codes,
             )
+        )
 
-            self.session.mount('http://', adapter)
-            self.session.mount('https://', adapter)
+        self.session.mount('http://', adapter)
+        self.session.mount('https://', adapter)
 
 
     @property
