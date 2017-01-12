@@ -4,7 +4,6 @@
 #  @namespace requests_mv_integrations
 
 import logging
-# import grequests
 import requests
 from requests.adapters import (HTTPAdapter, DEFAULT_POOLSIZE)
 from requests.packages.urllib3.util.retry import Retry
@@ -27,16 +26,17 @@ class TuneRequest(metaclass=Singleton):
         if retry_codes is None:
             retry_codes = set(REQUEST_RETRY_HTTP_STATUS_CODES)
 
-        self.session.mount(
-            'http',
-            HTTPAdapter(
-                max_retries=Retry(
-                    total=retry_tries,
-                    backoff_factor=retry_backoff,
-                    status_forcelist=retry_codes,
-                ),
-            ),
+        adapter = HTTPAdapter(
+            max_retries=Retry(
+                total=retry_tries,
+                backoff_factor=retry_backoff,
+                status_forcelist=retry_codes,
+            )
         )
+
+        self.session.mount('http://', adapter)
+        self.session.mount('https://', adapter)
+
 
     @property
     def session(self):
@@ -71,20 +71,6 @@ class TuneRequest(metaclass=Singleton):
             )
             exception_handler(ex)
             return None
-
-    # def request_async(self, request_method, request_urls, response_hook=None, exception_handler=None, **kwargs):
-    #     response_hook, exception_handler = self.create_hooks(response_hook, exception_handler)
-    #
-    #     unsent = [
-    #         grequests.request(
-    #             method=request_method,
-    #             url=request_url,
-    #             session=self.session,
-    #             hooks={'response': response_hook},
-    #             **kwargs
-    #         ) for request_url in request_urls
-    #     ]
-    #     return grequests.imap(unsent, size=self.POOL_SIZE, exception_handler=exception_handler)
 
     def response_hook(self, r, *args, **kwargs):
         log.info("{0} {1} {2}".format(r.request.method, r.url, str(r.status_code)))
