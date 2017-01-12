@@ -21,22 +21,33 @@ class TuneRequest(metaclass=Singleton):
 
     __session = None
 
-    def __init__(self, retry_tries=3, retry_backoff=0.1, retry_codes=None):
+    def __init__(self, retry_tries=3, retry_backoff=0.1, retry_codes=None, retry_url_prefix=None):
         self.session = requests.session()
 
         if retry_codes is None:
             retry_codes = set(REQUEST_RETRY_HTTP_STATUS_CODES)
 
-        self.session.mount(
-            'http://',
-            HTTPAdapter(
+        if retry_url_prefix is not None:
+            self.session.mount(retry_url_prefix, HTTPAdapter(
                 max_retries=Retry(
                     total=retry_tries,
                     backoff_factor=retry_backoff,
                     status_forcelist=retry_codes,
                 ),
-            ),
-        )
+            ))
+        else:
+
+            adapter = HTTPAdapter(
+                max_retries=Retry(
+                    total=retry_tries,
+                    backoff_factor=retry_backoff,
+                    status_forcelist=retry_codes,
+                )
+            )
+
+            self.session.mount('http://', adapter)
+            self.session.mount('https://', adapter)
+
 
     @property
     def session(self):
