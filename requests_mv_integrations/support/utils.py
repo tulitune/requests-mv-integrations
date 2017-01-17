@@ -63,3 +63,13 @@ def full_class_name(obj):
         return obj.__module__ + "." + obj.__class__.__name__
     except Exception as ex:
         return obj.__class__.__name__
+
+
+def urlencode_dict(request_data):
+    assert isinstance(request_data, dict)
+
+    request_data_query = ""
+    for key in request_data.keys():
+        request_data_query += str(key) + '=' + str(request_data[key]) + "&"
+
+    return request_data_query[:-1]

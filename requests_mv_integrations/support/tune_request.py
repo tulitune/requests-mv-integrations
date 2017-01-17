@@ -37,7 +37,6 @@ class TuneRequest(metaclass=Singleton):
         self.session.mount('http://', adapter)
         self.session.mount('https://', adapter)
 
-
     @property
     def session(self):
         return self.__session

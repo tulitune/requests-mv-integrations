@@ -3,6 +3,23 @@
 Release History
 ===============
 
+0.2.7 (2017-01-16)
+------------------
+**Bug Fixes**
+- Build Curl
+**Improvements**
+- Cleanup
+
+0.2.6 (2017-01-14)
+------------------
+**Improvements**
+- Requirements
+
+0.2.5 (2017-01-04)
+------------------
+**Improvements**
+- Cleanup
+
 0.2.4 (2017-01-04)
 ------------------
 **Bug Fixes**

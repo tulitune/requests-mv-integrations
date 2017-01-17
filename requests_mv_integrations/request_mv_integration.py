@@ -880,15 +880,6 @@ class RequestMvIntegration(object):
         kwargs.update({'verify': verify})
 
         try:
-            self.logger.debug(
-                "Send Request: Request Base: {0}".format(request_method),
-                extra={
-                    'request_label': request_label,
-                    'request_method': request_method,
-                    'request_curl': self.built_request_curl
-                }
-            )
-
             if build_request_curl:
                 self.built_request_curl = command_line_request_curl(
                     request_method=request_method,
@@ -899,6 +890,15 @@ class RequestMvIntegration(object):
                     request_auth=request_auth,
                     request_timeout=timeout,
                     request_allow_redirects=allow_redirects
+                )
+
+                self.logger.debug(
+                    "Send Request: Request: Curl",
+                    extra={
+                        'request_method': request_method,
+                        'request_label': request_label,
+                        'request_curl': self.built_request_curl
+                    }
                 )
 
             if hasattr(response, 'url'):

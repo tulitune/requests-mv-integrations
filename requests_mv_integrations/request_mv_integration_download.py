@@ -862,6 +862,7 @@ class RequestMvIntegrationDownload(object):
         request_curl = command_line_request_curl(
             request_method="GET",
             request_url=request_url,
+            request_params=request_params,
             request_headers=request_headers,
         )
 

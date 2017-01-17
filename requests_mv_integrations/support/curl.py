@@ -46,6 +46,7 @@ def command_line_request_curl(
     request_method,
     request_url,
     request_headers,
+    request_params=None,
     request_data=None,
     request_auth=None,
     request_json=None,
@@ -67,6 +68,18 @@ def command_line_request_curl(
     """
     key_user_agent = 'User-Agent'
     header_user_agent = {key_user_agent: __USER_AGENT__}
+
+    if request_method == 'GET':
+        if request_params:
+            assert request_data is None
+            if isinstance(request_params, dict):
+                request_data = urllib.parse.urlencode(request_params)
+            elif isinstance(request_params, str):
+                request_data=request_params
+
+    elif request_method in ['POST', 'PUT']:
+        if request_params:
+            request_url += "?" + urllib.parse.urlencode(request_params)
 
     if request_auth and isinstance(request_auth, requests.auth.HTTPBasicAuth):
         username = request_auth.username
