@@ -174,21 +174,21 @@ pep8: tools-requirements
 	@echo "======================================================"
 	@echo pep8 $(PACKAGE)
 	@echo "======================================================"
-	$(PYTHON3) -m pep8 --config .pep8 $(PACKAGE_FILES)
+	$(PYTHON3) -m pep8 --config .pep8 $(PACKAGE_ALL_FILES)
 
 pyflakes: tools-requirements
 	@echo "======================================================"
 	@echo pyflakes $(PACKAGE)
 	@echo "======================================================"
 	$(PIP3) install --upgrade pyflakes
-	$(PYTHON3) -m pyflakes $(PACKAGE_FILES)
+	$(PYTHON3) -m pyflakes $(PACKAGE_ALL_FILES)
 
 pylint: tools-requirements
 	@echo "======================================================"
 	@echo pylint $(PACKAGE)
 	@echo "======================================================"
 	$(PIP3) install --upgrade pylint
-	$(PYTHON3) -m pylint --rcfile .pylintrc $(PACKAGE_FILES) --disable=C0330,F0401,E0611,E0602,R0903,C0103,E1121,R0913,R0902,R0914,R0912,W1202,R0915,C0302 | more -30
+	$(PYTHON3) -m pylint --rcfile .pylintrc $(PACKAGE_ALL_FILES) --disable=C0330,F0401,E0611,E0602,R0903,C0103,E1121,R0913,R0902,R0914,R0912,W1202,R0915,C0302 | more -30
 
 yapf: tools-requirements
 	@echo "======================================================"

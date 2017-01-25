@@ -4,10 +4,10 @@ import os
 TMP_DIRECTORY = os.path.dirname(os.path.realpath(__file__)) + '/tmp'
 
 from .resources.mockserver import run_server
-
 from requests_mv_integrations import (RequestMvIntegrationUpload,)
-
 from requests_mv_integrations.exceptions import (TuneRequestBaseError,)
+
+__all__ = [run_server]
 
 current_path = os.path.dirname(os.path.realpath(__file__))
 test_config_path = "%s/tests/resources/uploadtestfile.json" % os.path.dirname(current_path)

@@ -12,6 +12,7 @@ from requests_mv_integrations.exceptions import (
     TuneRequestBaseError,
     TuneRequestServiceError,
     TuneRequestModuleError,
+    TuneRequestValueError,
 )
 
 from requests_mv_integrations.errors import TuneRequestErrorCodes
@@ -111,7 +112,7 @@ class RequestRetryException(TuneRequestBaseError):
     pass
 
 
-_request_retry_test_object = (
+test_request_retry_details = (
     ('RequestRetryException', None),
     ('TuneRequestBaseError', None),
     ('Exception', None),
@@ -119,162 +120,163 @@ _request_retry_test_object = (
     ('TuneRequestModuleError', TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_VALUE),
 )
 
-try_send_request_test_object = (
+
+test_try_send_request_details = (
     (
-        None,
-        None,
-        'response_none',
-        None,
-        'response=None',
-        None,
-        None,
-        None,
-        'TuneRequestModuleError',
-        TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_VALUE,
-        False,
+        None,  # attempts
+        None,  # tries
+        'response_none',  # response_type
+        None,  # exception_thrown_by_request_func
+        'response=None',  # request_label
+        None,  # request_retry_func
+        None,  # request_retry_excps_func
+        None,  # request_url
+        'TuneRequestModuleError',  # expected_exception_name
+        TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_VALUE,  # expected_error_code
+        False,  # is_expected_response
     ),
     (
-        1,
-        3,
-        'response_ok_with_valid_json_content',
-        None,
-        'OK reponse && request_retry_func=True',
-        lambda x: True,
-        None,
-        'www.requesturl.com',
-        None,
-        None,
-        None,
+        1,  # attempts
+        3,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        None,  # exception_thrown_by_request_func
+        'OK reponse && request_retry_func=True',  # request_label
+        lambda x: True,  # request_retry_func
+        None,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        None,  # expected_exception_name
+        None,  # expected_error_code
+        None,  # is_expected_response
     ),
     (
-        2,
-        0,
-        'response_ok_with_valid_json_content',
-        None,
-        'OK reponse && request_retry_func=True && Request tries exhausted',
-        lambda x: True,
-        None,
-        'www.requesturl.com',
-        'TuneRequestModuleError',
-        TuneRequestErrorCodes.REQ_ERR_RETRY_EXHAUSTED,
-        False,
+        2,  # attempts
+        0,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        None,  # exception_thrown_by_request_func
+        'OK reponse && request_retry_func=True && Request tries exhausted',  # request_label
+        lambda x: True,  # request_retry_func
+        None,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        'TuneRequestModuleError',  # expected_exception_name
+        TuneRequestErrorCodes.REQ_ERR_RETRY_EXHAUSTED,  # expected_error_code
+        False,  # is_expected_response
     ),
     (
-        1,
-        3,
-        'response_ok_with_valid_json_content',
-        None,
-        'OK reponse && request_retry_func=False',
-        lambda x: False,
-        None,
-        'www.requesturl.com',
-        None,
-        None,
-        True,
+        1,  # attempts
+        3,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        None,  # exception_thrown_by_request_func
+        'OK reponse && request_retry_func=False',  # request_label
+        lambda x: False,  # request_retry_func
+        None,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        None,  # expected_exception_name
+        None,  # expected_error_code
+        True,  # is_expected_response
     ),
     (
-        1,
-        3,
-        'response_ok_with_valid_json_content',
-        ReadTimeout,
-        'Request Retry Exception thrown && tries>0',
-        lambda x: False,
-        None,
-        'www.requesturl.com',
-        None,
-        None,
-        False,
+        1,  # attempts
+        3,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        ReadTimeout,  # exception_thrown_by_request_func
+        'Request Retry Exception thrown && tries>0',  # request_label
+        lambda x: False,  # request_retry_func
+        None,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        None,  # expected_exception_name
+        None,  # expected_error_code
+        False,  # is_expected_response
     ),
     (
-        1,
-        0,
-        'response_ok_with_valid_json_content',
-        ReadTimeout,
-        'Request Retry Exception thrown && tries==0',
-        lambda x: False,
-        None,
-        'www.requesturl.com',
-        'ReadTimeout',
-        None,
-        False,
+        1,  # attempts
+        0,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        ReadTimeout,  # exception_thrown_by_request_func
+        'Request Retry Exception thrown && tries==0',  # request_label
+        lambda x: False,  # request_retry_func
+        None,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        'ReadTimeout',  # expected_exception_name
+        None,  # expected_error_code
+        False,  # is_expected_response
     ),
     (
-        1,
-        3,
-        'response_ok_with_valid_json_content',
-        TuneRequestServiceError,
-        'TuneRequestServiceError && request_retry_excps_func==False',
-        lambda x: False,
-        lambda x, y: False,
-        'www.requesturl.com',
-        'TuneRequestServiceError',
-        None,
-        False,
+        1,  # attempts
+        3,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        TuneRequestServiceError,  # exception_thrown_by_request_func
+        'TuneRequestServiceError && request_retry_excps_func==False',  # request_label
+        lambda x: False,  # request_retry_func
+        lambda x, y: False,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        'TuneRequestServiceError',  # expected_exception_name
+        None,  # expected_error_code
+        False,  # is_expected_response
     ),
     (
-        1,
-        3,
-        'response_ok_with_valid_json_content',
-        TuneRequestServiceError,
-        'TuneRequestServiceError && request_retry_excps_func==True && tries>0',
-        lambda x: False,
-        lambda x, y: True,
-        'www.requesturl.com',
-        None,
-        None,
-        False,
+        1,  # attempts
+        3,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        TuneRequestServiceError,  # exception_thrown_by_request_func
+        'TuneRequestServiceError && request_retry_excps_func==True && tries>0',  # request_label
+        lambda x: False,  # request_retry_func
+        lambda x, y: True,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        None,  # expected_exception_name
+        None,  # expected_error_code
+        False,  # is_expected_response
     ),
     (
-        1,
-        0,
-        'response_ok_with_valid_json_content',
-        TuneRequestServiceError,
-        'TuneRequestServiceError && request_retry_excps_func==True && tries==0',
-        lambda x: False,
-        lambda x, y: True,
-        'www.requesturl.com',
-        'TuneRequestServiceError',
-        None,
-        False,
+        1,  # attempts
+        0,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        TuneRequestServiceError,  # exception_thrown_by_request_func
+        'TuneRequestServiceError && request_retry_excps_func==True && tries==0',  # request_label
+        lambda x: False,  # request_retry_func
+        lambda x, y: True,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        'TuneRequestServiceError',  # expected_exception_name
+        None,  # expected_error_code
+        False,  # is_expected_response
     ),
     (
-        1,
-        3,
-        'response_ok_with_valid_json_content',
-        Exception,
-        'General Exception && request_retry_excps_func==False',
-        lambda x: False,
-        lambda x, y: False,
-        'www.requesturl.com',
-        'Exception',
-        None,
-        False,
+        1,  # attempts
+        3,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        Exception,  # exception_thrown_by_request_func
+        'General Exception && request_retry_excps_func==False',  # request_label
+        lambda x: False,  # request_retry_func
+        lambda x, y: False,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        'Exception',  # expected_exception_name
+        None,  # expected_error_code
+        False,  # is_expected_response
     ),
     (
-        1,
-        3,
-        'response_ok_with_valid_json_content',
-        Exception,
-        'General Exception && request_retry_excps_func==True && tries>0',
-        lambda x: False,
-        lambda x, y: True,
-        'www.requesturl.com',
-        None,
-        None,
-        False,
+        1,  # attempts
+        3,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        Exception,  # exception_thrown_by_request_func
+        'General Exception && request_retry_excps_func==True && tries>0',  # request_label
+        lambda x: False,  # request_retry_func
+        lambda x, y: True,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        None,  # expected_exception_name
+        None,  # expected_error_code
+        False,  # is_expected_response
     ),
     (
-        1,
-        0,
-        'response_ok_with_valid_json_content',
-        Exception,
-        'General Exception && request_retry_excps_func==True && tries==0',
-        lambda x: False,
-        lambda x, y: True,
-        'www.requesturl.com',
-        'TuneRequestModuleError',
-        TuneRequestErrorCodes.REQ_ERR_RETRY_EXHAUSTED,
-        False,
+        1,  # attempts
+        0,  # tries
+        'response_ok_with_valid_json_content',  # response_type
+        Exception,  # exception_thrown_by_request_func
+        'General Exception && request_retry_excps_func==True && tries==0',  # request_label
+        lambda x: False,  # request_retry_func
+        lambda x, y: True,  # request_retry_excps_func
+        'www.requesturl.com',  # request_url
+        'TuneRequestModuleError',  # expected_exception_name
+        TuneRequestErrorCodes.REQ_ERR_RETRY_EXHAUSTED,  # expected_error_code
+        False,  # is_expected_response
     ),
 )
 
@@ -302,9 +304,17 @@ class TestRequestMvIntegration:
     A test class, for testing RequestMvIntegration methods.
     """
 
-    @pytest.mark.parametrize("requests_error, mv_integration_error, error_code", request_raised_exceptions_test_object)
+    @pytest.mark.parametrize(
+        "requests_error, mv_integration_error, error_code",
+        request_raised_exceptions_test_object,
+    )
     def test_request_raised_exceptions(
-        self, monkeypatch, request_mv_integration_object, requests_error, mv_integration_error, error_code
+        self,
+        monkeypatch,
+        request_mv_integration_object,
+        requests_error,
+        mv_integration_error,
+        error_code,
     ):
         """
         Test RequestMvIntegration.request() exception handling, my mocking the call
@@ -319,20 +329,48 @@ class TestRequestMvIntegration:
         is the correct one.
         """
 
-        def mock__request_retry(*args, **kwargs):
+        def mock_request_retry(*args, **kwargs):
             if requests_error == requests.packages.urllib3.exceptions.ReadTimeoutError:
                 raise requests_error('pool', 'url', 'message')
             raise requests_error
 
         req = request_mv_integration_object
-        monkeypatch.setattr(req, '_request_retry', mock__request_retry)
+        monkeypatch.setattr(req, '_request_retry', mock_request_retry)
         try:
-            req.request(request_method="Doesn't matter", request_url="Doesn't matter")
+            req.request(
+                request_method="Doesn't matter",
+                request_url="Doesn't matter",
+            )
         except Exception as e:
             assert (isinstance(e, mv_integration_error))
             assert (e.error_code == error_code)
 
-    def test_request_happy_path(self, request_mv_integration_object, tune_request_object, ok_request_args_dict):
+    def test_request_raised_exceptions_none(
+        self,
+        request_mv_integration_object
+    ):
+        """
+        Test RequestMvIntegration.request() exception handling, my mocking the call
+        to RequestMvIntegration._request_retry()
+        :param request_mv_integration_object: An instance of RequestMvIntegration.
+        """
+
+        req = request_mv_integration_object
+        try:
+            req.request(
+                request_method=None,
+                request_url=None,
+            )
+        except Exception as e:
+            assert (isinstance(e, TuneRequestValueError))
+            assert (e.error_code == TuneRequestErrorCodes.REQ_ERR_ARGUMENT)
+
+    def test_request_happy_path(
+        self,
+        request_mv_integration_object,
+        tune_request_object,
+        ok_request_args_dict,
+    ):
         """
         A test for a happy path:
         Call RequestMvIntegration.request() and expect to receive a requests.Response object
@@ -348,12 +386,23 @@ class TestRequestMvIntegration:
         tr = tune_request_object
         req.__tune_request = tr
         request_args = ok_request_args_dict
-        resp = req.request(request_method=request_args['request_method'], request_url=request_args['request_url'])
+        resp = req.request(
+            request_method=request_args['request_method'],
+            request_url=request_args['request_url'],
+        )
         assert (resp.status_code == requests.codes.ok)
 
-    @pytest.mark.parametrize("exception_type_name, error_code", _request_retry_test_object)
-    def test__request_retry(
-        self, exception_type_name, error_code, exceptions, request_mv_integration_object, monkeypatch
+    @pytest.mark.parametrize(
+        "exception_type_name, error_code",
+        test_request_retry_details,
+    )
+    def test_request_retry(
+        self,
+        exception_type_name,
+        error_code,
+        exceptions,
+        request_mv_integration_object,
+        monkeypatch,
     ):
         def mock_try_send_request(_attempts, _tries, request_func, request_label, request_retry_func, request_url):
             if exception_type_name in exceptions:
@@ -373,7 +422,11 @@ class TestRequestMvIntegration:
             else:
                 raise Exception("Bad input to test: No {} exceptions".format(exception_type_name))
 
-        monkeypatch.setattr(request_mv_integration_object, 'try_send_request', mock_try_send_request)
+        monkeypatch.setattr(
+            request_mv_integration_object,
+            'try_send_request',
+            mock_try_send_request,
+        )
         request_mv_integration_object.request_retry_excps = [RequestRetryException]
         try:
             request_mv_integration_object._request_retry(call_func=lambda *args, **kwargs: None)
@@ -384,7 +437,7 @@ class TestRequestMvIntegration:
 
     @pytest.mark.parametrize(
         "attempts, tries, response_type, exception_thrown_by_request_func, request_label, request_retry_func, request_retry_excps_func, request_url, expected_exception_name, expected_error_code, is_expected_response",
-        try_send_request_test_object
+        test_try_send_request_details
     )
     def test_try_send_request(
         self,

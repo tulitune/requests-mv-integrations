@@ -73,7 +73,7 @@ _test_command_line_request_curl_get_auth = [(
     "request_method, request_url, request_headers, request_data, curl_expected",
     _test_command_line_request_curl_get_data_str,
 )
-def test_curl_get_data(request_method, request_url, request_data, request_headers, curl_expected):
+def test_curl_get_data_str(request_method, request_url, request_data, request_headers, curl_expected):
     curl_actual = command_line_request_curl(
         request_method=request_method,
         request_url=request_url,
@@ -87,11 +87,12 @@ def test_curl_get_data(request_method, request_url, request_data, request_header
 
     assert ddiff == {}
 
+
 @pytest.mark.parametrize(
     "request_method, request_url, request_headers, request_data, curl_expected",
     _test_command_line_request_curl_get_data_dict,
 )
-def test_curl_get_data(request_method, request_url, request_data, request_headers, curl_expected):
+def test_curl_get_data_dict(request_method, request_url, request_data, request_headers, curl_expected):
     curl_actual = command_line_request_curl(
         request_method=request_method,
         request_url=request_url,

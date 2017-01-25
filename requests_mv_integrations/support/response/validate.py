@@ -3,34 +3,18 @@
 #  @copyright 2016 TUNE, Inc. (http://www.tune.com)
 #  @namespace request_mv_integration
 
-import copy
-import datetime as dt
 import json
 import logging
-import os
-import time
-import urllib.parse
-from functools import partial
 
 import bs4
-import requests
 from requests_toolbelt.utils import dump
 import xmltodict
-from logging_mv_integrations import (
-    TuneLoggingFormat,
-    TuneLoggingHandler,
-    get_logger,
-)
 from pprintpp import pprint
 from pyhttpstatus_utils import (
-    HttpStatusCode,
-    HttpStatusType,
     http_status_code_to_desc,
     http_status_code_to_type,
-    is_http_status_type,
     is_http_status_successful,
 )
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from requests_mv_integrations import (__python_required_version__,)
 from requests_mv_integrations.errors import (
@@ -351,7 +335,7 @@ def build_response_error_details(request_label, request_url, response):
     except Exception:
         if hasattr(response, 'text') and \
                 response.text and \
-                        len(response.text) > 0:
+                len(response.text) > 0:
             response_details = response.text
             response_details_source = 'text'
 
@@ -406,7 +390,7 @@ def handle_json_decode_error(
 
     if hasattr(response, 'text') and \
             response.text and \
-                    len(response.text) > 0:
+            len(response.text) > 0:
         response_details = response.text
         response_details_source = 'text'
         response_content_length = len(response_details)

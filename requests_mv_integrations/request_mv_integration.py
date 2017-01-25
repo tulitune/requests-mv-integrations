@@ -169,6 +169,14 @@ class RequestMvIntegration(object):
         self.tune_request = tune_request
         self._requests_logger()
 
+        self.timeout = self._REQUEST_CONFIG['timeout']
+        self.retry_delay = self._REQUEST_CONFIG['delay']
+        self.retry_tries = self._REQUEST_CONFIG['tries']
+
+        self.retry_max_delay = None
+        self.retry_backoff = 0
+        self.retry_jitter = 0
+
     def _requests_logger(self):
         """Set logging format to package 'requests'"""
         if self.logger:
@@ -190,9 +198,6 @@ class RequestMvIntegration(object):
         self.timeout = self._REQUEST_CONFIG['timeout']
         self.retry_tries = self._REQUEST_CONFIG['tries']
         self.retry_delay = self._REQUEST_CONFIG['delay']
-        self.retry_max_delay = None
-        self.retry_backoff = 0
-        self.retry_jitter = 0
 
         if request_retry:
             self.timeout = request_retry.get('timeout', self._REQUEST_CONFIG['timeout'])
@@ -272,12 +277,6 @@ class RequestMvIntegration(object):
         self.logger.debug("Request: Start: {}".format(request_label if request_label else ""))
 
         timeout = None
-
-        retry_tries = None
-        retry_delay = None
-        retry_backoff = 0
-        retry_jitter = 0
-        retry_max_delay = None
 
         if not verify:
             requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -564,10 +563,7 @@ class RequestMvIntegration(object):
                 }
             )
 
-            error_exception = None
             _tries -= 1
-
-            is_retry = True
 
             to_raise_exception, to_return_response = self.try_send_request(
                 _attempts, _tries, request_func, request_label, request_retry_func, request_url
@@ -953,7 +949,6 @@ class RequestMvIntegration(object):
             http_status_code_to_desc(http_status_code)
 
         response_extra = {
-            'request_label': request_label,
             'http_status_code': http_status_code,
             'http_status_type': http_status_type,
             'http_status_desc': http_status_desc,

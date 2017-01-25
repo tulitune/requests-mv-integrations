@@ -3,7 +3,11 @@
 Release History
 ===============
 
-0.03.9 (2017-01-18)
+0.03.3 (2017-01-24)
+-------------------
+- Cleanup using pyflakes, pep8, pylint, and yapf
+
+0.03.1 (2017-01-18)
 -------------------
 - Log reduction
 

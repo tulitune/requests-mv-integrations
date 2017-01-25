@@ -7,10 +7,10 @@ tmpdir = tempfile.mkdtemp()
 from .resources.mockserver import (run_server, HTTP_SERVER_PORT, StaticFilesHandler)
 from requests_mv_integrations import (RequestMvIntegrationDownload,)
 import csv
-
 from os import sep
-
 from subprocess import Popen, PIPE
+
+__all__ = [run_server]
 
 
 @pytest.fixture(scope='session')

@@ -5,6 +5,8 @@ install:
 - pip install .
 - pip install -r requirements.txt
 - pip install coveralls
+before_script:
+- make pyflakes
 script:
 - make test
 - make coverage

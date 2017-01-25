@@ -4,18 +4,16 @@
 #  @namespace tune_mv_integration
 
 import pytest
+import os
 from os import sep
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from pyhttpstatus_utils.status_code import HttpStatusCode
+import errno
 
-import json
 HTTP_SERVER_PORT = 8998
 CSV_DOWNLOAD_FILE_NAME = 'downloadtestfile.csv'
 JSON_DOWNLOAD_FILE_NAME = 'downloadtestfile.json'
-
-from pyhttpstatus_utils.status_code import HttpStatusCode
-import errno
-import os
 
 
 class StaticFilesHandler(BaseHTTPRequestHandler):
