@@ -8,6 +8,8 @@ import requests
 from requests_mv_integrations import (__version__, __title__)
 from pyhttpstatus_utils import (HttpStatusCode)
 
+__all__ = [HttpStatusCode]
+
 __MODULE_VERSION__ = __version__
 __MODULE_VERSION_INFO__ = tuple(__MODULE_VERSION__.split('.'))
 __MODULE_SIG__ = "%s/%s" % (__title__, __MODULE_VERSION__)

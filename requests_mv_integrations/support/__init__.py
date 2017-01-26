@@ -4,6 +4,7 @@
 #  @namespace requests_mv_integrations
 
 from .bom_encoding import (
+    get_bom_encoding,
     detect_bom,
     get_bom_encoding,
     remove_bom,
@@ -53,45 +54,3 @@ from .utils import (
     mem_usage,
     env_usage,
 )
-
-# pyflakes: Ignore imported but unused
-__all__ = [
-    HEADER_CONTENT_TYPE_APP_JSON,
-    HEADER_CONTENT_TYPE_APP_URLENCODED,
-    HEADER_USER_AGENT,
-    REQUEST_RETRY_EXCPS,
-    REQUEST_RETRY_HTTP_STATUS_CODES,
-    Singleton,
-    TuneRequest,
-    __LOGGER_NAME__,
-    __MODULE_SIG__,
-    __PYTHON_VERSION__,
-    __TIMEZONE_NAME_DEFAULT__,
-    __USER_AGENT__,
-    base_class_name,
-    build_response_error_details,
-    bytes_to_human,
-    command_line_request_curl,
-    csv_skip_last_row,
-    detect_bom,
-    disk_usage,
-    env_usage,
-    full_class_name,
-    get_bom_encoding,
-    handle_json_decode_error,
-    mem_usage,
-    parse_curl,
-    python_check_version,
-    remove_bom,
-    requests_response_json,
-    requests_response_text_html,
-    requests_response_text_xml,
-    safe_cast,
-    safe_dict,
-    safe_float,
-    safe_int,
-    safe_str,
-    urlencode_dict,
-    validate_json_response,
-    validate_response,
-]

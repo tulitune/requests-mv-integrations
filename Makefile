@@ -25,6 +25,7 @@ WHEEL_ARCHIVE := dist/$(PACKAGE_PREFIX)-$(VERSION)-$(PACKAGE_SUFFIX)
 PACKAGE_FILES := $(shell find $(PACKAGE_PREFIX) examples ! -name '__init__.py' -type f -name "*.py")
 PACKAGE_ALL_FILES := $(shell find $(PACKAGE_PREFIX) tests examples -type f -name "*.py")
 PACKAGE_EXAMPLE_FILES := $(shell find examples ! -name '__init__.py' -type f -name "*.py")
+PYFLAKES_ALL_FILES := $(shell find $(PACKAGE_PREFIX) tests examples -type f  -name '*.py' ! '(' -name '__init__.py' ')')
 
 TOOLS_REQ_FILE := requirements-tools.txt
 REQ_FILE      := requirements.txt
@@ -181,7 +182,7 @@ pyflakes: tools-requirements
 	@echo pyflakes $(PACKAGE)
 	@echo "======================================================"
 	$(PIP3) install --upgrade pyflakes
-	$(PYTHON3) -m pyflakes $(PACKAGE_ALL_FILES)
+	$(PYTHON3) -m pyflakes $(PYFLAKES_ALL_FILES)
 
 pylint: tools-requirements
 	@echo "======================================================"
