@@ -363,8 +363,10 @@ class RequestMvIntegration(object):
         if request_retry_excps:
             extra_request.update({'request_retry_excps_func': request_retry_excps_func})
 
-        self.logger.debug("Request: Details", extra=extra_request)
-        self.logger.debug("Request: Usage: Start", extra=env_usage("/"))
+        extra_request.update(
+            env_usage()
+        )
+        self.logger.debug("Request: Start: Details", extra=extra_request)
 
         try:
             self._prep_request_retry(request_retry, request_retry_http_status_codes)
@@ -472,12 +474,11 @@ class RequestMvIntegration(object):
 
         request_time_msecs = int(diff_req.total_seconds() * 1000)
 
-        self.logger.info(
-            "Request: Finished", extra={'request_label': request_label,
-                                        'request_time_msecs': request_time_msecs}
-        )
-
-        self.logger.info("Request: Usage", extra=env_usage("/"))
+        self.logger.info("Request: Finished", extra={
+            'request_label': request_label,
+            'request_time_msecs': request_time_msecs,
+        })
+        self.logger.debug("Request: Usage", extra=env_usage())
 
         return response
 

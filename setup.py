@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #  @namespace requests-mv-integrations
+#
+#    Copyright (c) 2017 TUNE, Inc.
+#    All rights reserved.
+#
 
 from __future__ import with_statement
 
@@ -52,7 +56,6 @@ CLASSIFIERS = [
     'Natural Language :: English',
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.3',
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',

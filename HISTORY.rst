@@ -3,6 +3,12 @@
 Release History
 ===============
 
+0.03.5 (2017-01-27)
+-------------------
+- Reduce logging
+- Disc usage
+- Iron.io Partition
+
 0.03.3 (2017-01-26)
 -------------------
 - Cleanup using pyflakes, pep8, pylint, and yapf
