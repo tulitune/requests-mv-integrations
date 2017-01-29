@@ -28,8 +28,11 @@ request_raised_exceptions_test_object = (
     (requests.exceptions.ReadTimeout, TuneRequestServiceError, TuneRequestErrorCodes.GATEWAY_TIMEOUT),
     (requests.exceptions.Timeout, TuneRequestServiceError, TuneRequestErrorCodes.GATEWAY_TIMEOUT),
     (requests.exceptions.HTTPError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_HTTP),
-    (BrokenPipeError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT),
-    (ConnectionError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT),
+    (requests.exceptions.ConnectionError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT),
+    (requests.exceptions.ProxyError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT),
+    (requests.exceptions.SSLError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT),
+    (BrokenPipeError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_CONNECT),
+    (ConnectionError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_CONNECT),
     (
         requests.packages.urllib3.exceptions.ProtocolError, TuneRequestModuleError,
         TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT
@@ -39,9 +42,12 @@ request_raised_exceptions_test_object = (
         TuneRequestErrorCodes.GATEWAY_TIMEOUT
     ),
     (requests.exceptions.TooManyRedirects, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_REDIRECTS),
+    (requests.exceptions.RetryError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_RETRY_EXHAUSTED),
     (requests.exceptions.RequestException, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST),
     (TuneRequestBaseError, TuneRequestBaseError, TuneRequestErrorCodes.REQ_ERR_UNEXPECTED),
     (Exception, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_SOFTWARE),
+
+    #The "http status code specific RetryError" case is tested differently and therfore is missing from the above list
 )
 
 

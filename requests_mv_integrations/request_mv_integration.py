@@ -19,13 +19,13 @@ from logging_mv_integrations import (
     get_logger,
 )
 from pyhttpstatus_utils import (
-    HttpStatusCode,
     HttpStatusType,
     http_status_code_to_desc,
     http_status_code_to_type,
     is_http_status_type,
 )
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from pyhttpstatus_utils.status_code import HttpStatusCode
+from requests.packages.urllib3.exceptions import (InsecureRequestWarning,)
 
 from requests_mv_integrations import (
     __python_required_version__,
@@ -363,9 +363,7 @@ class RequestMvIntegration(object):
         if request_retry_excps:
             extra_request.update({'request_retry_excps_func': request_retry_excps_func})
 
-        extra_request.update(
-            env_usage()
-        )
+        extra_request.update(env_usage())
         self.logger.debug("Request: Start: Details", extra=extra_request)
 
         try:
@@ -400,33 +398,32 @@ class RequestMvIntegration(object):
                 error_code=TuneRequestErrorCodes.REQ_ERR_REQUEST_HTTP
             )
 
-        except requests.exceptions.ConnectionError as ex_req_connect:
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.ProxyError,
+            requests.exceptions.SSLError,
+        ) as ex_req_connect:
             raise TuneRequestModuleError(
-                error_message="Request: Exception: Connection Error",
+                error_message="Request: Exception: {}".format(base_class_name(ex_req_connect)),
                 errors=ex_req_connect,
                 error_request_curl=self.built_request_curl,
                 error_code=TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT
             )
 
-        except BrokenPipeError as ex_broken_pipe:
+        except (
+            BrokenPipeError,
+            ConnectionError,
+        ) as ex_ose_connect:
             raise TuneRequestModuleError(
-                error_message="Request: Exception: Broken Pipe Error",
-                errors=ex_broken_pipe,
+                error_message="Request: Exception: OSE {}".format(base_class_name(ex_ose_connect)),
+                errors=ex_ose_connect,
                 error_request_curl=self.built_request_curl,
-                error_code=TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT
-            )
-
-        except ConnectionError as ex_connect:
-            raise TuneRequestModuleError(
-                error_message="Request: Exception: Connection Error",
-                errors=ex_connect,
-                error_request_curl=self.built_request_curl,
-                error_code=TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT
+                error_code=TuneRequestErrorCodes.REQ_ERR_CONNECT
             )
 
         except requests.packages.urllib3.exceptions.ProtocolError as ex_req_urllib3_protocol:
             raise TuneRequestModuleError(
-                error_message="Request: Exception: Protocol Error",
+                error_message="Request: Exception: Urllib3: Protocol Error",
                 errors=ex_req_urllib3_protocol,
                 error_request_curl=self.built_request_curl,
                 error_code=TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT
@@ -446,6 +443,42 @@ class RequestMvIntegration(object):
                 errors=ex_req_redirects,
                 error_request_curl=self.built_request_curl,
                 error_code=TuneRequestErrorCodes.REQ_ERR_REQUEST_REDIRECTS
+            )
+
+        except requests.exceptions.RetryError as ex_req_adapter_retry:
+            # Expected structure of RetryError:
+            # RetryError has list 'args' of len 1: RetryError.args[0] == MaxRetryError (from urlib3)
+            # Structure of MaxRetryError: MaxRetryError.reason == ResponseError (from urlib3)
+            if len(ex_req_adapter_retry.args) == 1 and hasattr(ex_req_adapter_retry.args[0], 'reason'):
+                response_err = ex_req_adapter_retry.args[0].reason
+                status_codes = [int(s) for s in response_err.args[0].split() if s.isdigit()]
+                if len(status_codes) == 1:
+                    http_status_code = status_codes[0]
+                    http_status_type = http_status_code_to_type(http_status_code)
+                    error_kwargs = {
+                        'errors': ex_req_adapter_retry,
+                        'error_code': http_status_code,
+                        'error_reason': response_err.args[0],
+                        'error_message': "Request: Exception: HTTPAdapter: Retries exhausted on: '{}'"
+                        .format(request_url),
+                        'error_request_curl': self.built_request_curl,
+                    }
+
+                    self.logger.error("Request: Exception: HTTPAdapter: Max retry error", extra=error_kwargs)
+                    if http_status_type == HttpStatusType.CLIENT_ERROR:
+                        raise TuneRequestClientError(**error_kwargs)
+                    elif http_status_type == HttpStatusType.SERVER_ERROR:
+                        raise TuneRequestServiceError(**error_kwargs)
+
+            # THIS BLOCK SHOULD NOT BE ACTUALLY ACCESSED. IF IT DOES LOOK INTO IT:
+            self.logger.error(
+                "Send Request : Unexpected RetryError occurred", extra={'request_curl': self.built_request_curl}
+            )
+            raise TuneRequestModuleError(
+                error_message="Request: Exception: HTTPAdapter: Unexpected Retry Error",
+                errors=ex_req_adapter_retry,
+                error_request_curl=self.built_request_curl,
+                error_code=TuneRequestErrorCodes.REQ_ERR_RETRY_EXHAUSTED,
             )
 
         except requests.exceptions.RequestException as ex_req_request:
@@ -468,16 +501,17 @@ class RequestMvIntegration(object):
                 error_request_curl=self.built_request_curl,
                 error_code=TuneRequestErrorCodes.REQ_ERR_SOFTWARE
             )
-
         time_end_req = dt.datetime.now()
         diff_req = time_end_req - time_start_req
 
         request_time_msecs = int(diff_req.total_seconds() * 1000)
 
-        self.logger.info("Request: Finished", extra={
-            'request_label': request_label,
-            'request_time_msecs': request_time_msecs,
-        })
+        self.logger.info(
+            "Request: Finished", extra={
+                'request_label': request_label,
+                'request_time_msecs': request_time_msecs,
+            }
+        )
         self.logger.debug("Request: Usage", extra=env_usage())
 
         return response
@@ -954,7 +988,6 @@ class RequestMvIntegration(object):
             'http_status_type': http_status_type,
             'http_status_desc': http_status_desc,
             'response_headers': safe_dict(response_headers),
-            'request_label': request_label
         }
 
         self.logger.debug("Send Request: Response: Details", extra=response_extra)

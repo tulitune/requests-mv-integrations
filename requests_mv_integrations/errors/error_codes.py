@@ -49,4 +49,6 @@ class TuneRequestErrorCodes(HttpStatusCode):
     REQ_ERR_AUTH_RESP_ERROR = 613  # Auth Response Error
     REQ_ERR_JSON_DECODING_ERROR = 614  # JSON Decoding Error
 
+    REQ_ERR_CONNECT = 615  # Connection Error originating from a python builtins.py exception
+
     REQ_ERR_UNEXPECTED = 699  # Unexpected Error
