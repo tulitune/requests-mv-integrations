@@ -23,6 +23,11 @@ from requests.models import Response
 
 from requests.exceptions import ReadTimeout
 
+from pyhttpstatus_utils import status_dicts, http_status_code_to_type
+
+from .resources.mockserver import run_server
+assert run_server  # Silence Pyflakes
+
 request_raised_exceptions_test_object = (
     (requests.exceptions.ConnectTimeout, TuneRequestServiceError, TuneRequestErrorCodes.GATEWAY_TIMEOUT),
     (requests.exceptions.ReadTimeout, TuneRequestServiceError, TuneRequestErrorCodes.GATEWAY_TIMEOUT),
@@ -304,6 +309,23 @@ def exceptions():
     return exceptions_dict
 
 
+def get_http_responses_4xx_5xx():
+    client_error_type = status_dicts.type[400]
+    server_error_type = status_dicts.type[500]
+
+    ignore_list = [419, 425, 509]  # Uncommon http responses excluded from the test
+
+    # Collect all possible 4xx and 5xx http responses
+    http_responses = [
+        code for code in status_dicts.name if http_status_code_to_type(code) in [client_error_type, server_error_type]
+    ]
+    http_responses = [code for code in http_responses if code not in ignore_list]
+    return http_responses
+
+
+http_responses_4xx_5xx = get_http_responses_4xx_5xx()
+
+
 class TestRequestMvIntegration:
     """
     A test class, for testing RequestMvIntegration methods.
@@ -349,6 +371,23 @@ class TestRequestMvIntegration:
         except Exception as e:
             assert (isinstance(e, mv_integration_error))
             assert (e.error_code == error_code)
+
+    @pytest.mark.parametrize('tested_http_response', http_responses_4xx_5xx)
+    def test_request_http_response_4xx_5xx(self, tested_http_response, request_mv_integration_object, run_server):
+        """
+        Test RequestMvIntegration.request() handling of receiving a 4xx or 5xx response
+        This also tests handling of RetryError raised when retries are exhausted (for some of the http response
+        codes are designated for retry).
+
+          The Tests asserts that the output exit code is equal to the mocked http response code
+        :param request_mv_integration_object: An instance of RequestMvIntegration.
+        :return:
+        """
+        try:
+            request_mv_integration_object.request('GET', "http://localhost:8998/status/" + str(tested_http_response))
+        except Exception as ex:
+            assert ex.error_code == tested_http_response, "Expected exit_code same as mocked http response code: {}.  got: {}"\
+                .format(tested_http_response, ex.error_code)
 
     def test_request_raised_exceptions_none(self, request_mv_integration_object):
         """
