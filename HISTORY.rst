@@ -3,6 +3,10 @@
 Release History
 ===============
 
+0.03.9 (2017-02-06)
+-------------------
+- TuneRequest is not a Singleton.
+
 0.03.8 (2017-02-03)
 -------------------
 - Upgrade to Python 3.6

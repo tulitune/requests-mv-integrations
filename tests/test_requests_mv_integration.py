@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#  @copyright 2016 TUNE, Inc. (http://www.tune.com)
+#  @copyright 2017 TUNE, Inc. (http://www.tune.com)
 #  @namespace requests_mv_integration
 
 import pytest
@@ -37,16 +37,13 @@ request_raised_exceptions_test_object = (
     (requests.exceptions.ProxyError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT),
     (requests.exceptions.SSLError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT),
     (BrokenPipeError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_CONNECT),
-    (ConnectionError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_CONNECT),
-    (
+    (ConnectionError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_CONNECT), (
         requests.packages.urllib3.exceptions.ProtocolError, TuneRequestModuleError,
         TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT
-    ),
-    (
+    ), (
         requests.packages.urllib3.exceptions.ReadTimeoutError, TuneRequestServiceError,
         TuneRequestErrorCodes.GATEWAY_TIMEOUT
-    ),
-    (requests.exceptions.TooManyRedirects, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_REDIRECTS),
+    ), (requests.exceptions.TooManyRedirects, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST_REDIRECTS),
     (requests.exceptions.RetryError, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_RETRY_EXHAUSTED),
     (requests.exceptions.RequestException, TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_REQUEST),
     (TuneRequestBaseError, TuneRequestBaseError, TuneRequestErrorCodes.REQ_ERR_UNEXPECTED),
@@ -123,13 +120,9 @@ class RequestRetryException(TuneRequestBaseError):
     pass
 
 
-test_request_retry_details = (
-    ('RequestRetryException', None),
-    ('TuneRequestBaseError', None),
-    ('Exception', None),
-    ('TuneRequestModuleError', TuneRequestErrorCodes.REQ_ERR_RETRY_EXHAUSTED),
-    ('TuneRequestModuleError', TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_VALUE),
-)
+test_request_retry_details = (('RequestRetryException', None), ('TuneRequestBaseError', None), ('Exception', None),
+                              ('TuneRequestModuleError', TuneRequestErrorCodes.REQ_ERR_RETRY_EXHAUSTED),
+                              ('TuneRequestModuleError', TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_VALUE),)
 
 test_try_send_request_details = (
     (
@@ -423,9 +416,10 @@ class TestRequestMvIntegration:
         :param ok_request_args_dict: A dictionary of arguments for the request, which should return an OK response.
         :return: Assert
         """
+        assert request_mv_integration_object
+        assert tune_request_object
         req = request_mv_integration_object
-        tr = tune_request_object
-        req.__tune_request = tr
+        req.tune_request = tune_request_object
         request_args = ok_request_args_dict
         resp = req.request(
             request_method=request_args['request_method'],

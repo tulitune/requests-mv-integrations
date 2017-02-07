@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#  @copyright 2016 TUNE, Inc. (http://www.tune.com)
+#  @copyright 2017 TUNE, Inc. (http://www.tune.com)
 #  @namespace request_mv_integration
 
 import logging
@@ -65,7 +65,8 @@ def requests_response_text_xml(response):
     response_content_length = len(response_content)
 
     xml_json = None
-    if response_content_type.startswith('text/xml'):
+    if response_content_type.startswith('text/xml') \
+            or response_content_type.startswith('application/xml'):
         if response_http_status_code == 200 and \
                 response_content_length > 0 and \
                 response_content:

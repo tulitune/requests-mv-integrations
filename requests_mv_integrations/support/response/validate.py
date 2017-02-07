@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#  @copyright 2016 TUNE, Inc. (http://www.tune.com)
+#  @copyright 2017 TUNE, Inc. (http://www.tune.com)
 #  @namespace request_mv_integration
 
 import json
@@ -16,12 +16,16 @@ from pyhttpstatus_utils import (
     is_http_status_successful,
 )
 
-from requests_mv_integrations import (__python_required_version__,)
+from requests_mv_integrations import (
+    __python_required_version__,
+)
 from requests_mv_integrations.errors import (
     get_exception_message,
     TuneRequestErrorCodes,
 )
-from requests_mv_integrations.exceptions import (TuneRequestModuleError,)
+from requests_mv_integrations.exceptions import (
+    TuneRequestModuleError,
+)
 from requests_mv_integrations.support.utils import (
     bytes_to_human,
     base_class_name,

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#  @copyright 2016 TUNE, Inc. (http://www.tune.com)
+#  @copyright 2017 TUNE, Inc. (http://www.tune.com)
 #  @namespace requests_mv_integrations
 
 __title__ = 'requests-mv-integrations'
-__version__ = '0.03.8'
-__build__ = 0x000308
+__version__ = '0.03.9'
+__build__ = 0x000309
 __version_info__ = tuple(__version__.split('.'))
 
 __author__ = 'jefft@tune.com'

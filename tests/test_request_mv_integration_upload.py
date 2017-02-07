@@ -4,8 +4,12 @@ import os
 TMP_DIRECTORY = os.path.dirname(os.path.realpath(__file__)) + '/tmp'
 
 from .resources.mockserver import run_server
-from requests_mv_integrations import (RequestMvIntegrationUpload,)
-from requests_mv_integrations.exceptions import (TuneRequestBaseError,)
+from requests_mv_integrations import (
+    RequestMvIntegrationUpload,
+)
+from requests_mv_integrations.exceptions import (
+    TuneRequestBaseError,
+)
 
 __all__ = [run_server]
 
@@ -23,10 +27,7 @@ def request_object():
 
 class TestRequestMvIntegrationUpload:
     @pytest.mark.parametrize(
-        'url, file_path, message', (
-            ("url", "path", 'FileNotFound'),
-            ("url", test_config_path, 'Invalid URL'),
-        )
+        'url, file_path, message', (("url", "path", 'FileNotFound'), ("url", test_config_path, 'Invalid URL'),)
     )
     def test_request_upload_json_fail(self, request_object, url, file_path, message):
 
@@ -42,10 +43,7 @@ class TestRequestMvIntegrationUpload:
         assert message in str(info.value)
 
     @pytest.mark.parametrize(
-        'is_gzip, content_type', (
-            (True, 'application/gzip'),
-            (None, 'application/json; charset=utf8'),
-        )
+        'is_gzip, content_type', ((True, 'application/gzip'), (None, 'application/json; charset=utf8'),)
     )
     def test_request_upload_json_pass(self, request_object, is_gzip, content_type, run_server):
 
@@ -70,5 +68,4 @@ class TestRequestMvIntegrationUpload:
     def test_request_upload_data_pass(self, request_object, url, data, run_server):
 
         response = request_object.request_upload_data(url, data, upload_data_size=1)
-
         assert 'application/json; charset=utf8' in response.headers["Content-Type"]

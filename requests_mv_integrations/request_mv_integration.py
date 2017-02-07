@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#  @copyright 2016 TUNE, Inc. (http://www.tune.com)
+#  @copyright 2017 TUNE, Inc. (http://www.tune.com)
 #  @namespace requests_mv_integrations
 
 import copy
@@ -25,7 +25,9 @@ from pyhttpstatus_utils import (
     is_http_status_type,
 )
 from pyhttpstatus_utils.status_code import HttpStatusCode
-from requests.packages.urllib3.exceptions import (InsecureRequestWarning,)
+from requests.packages.urllib3.exceptions import (
+    InsecureRequestWarning,
+)
 
 from requests_mv_integrations import (
     __python_required_version__,
@@ -44,18 +46,18 @@ from requests_mv_integrations.exceptions import (
     TuneRequestValueError,
 )
 from requests_mv_integrations.support import (
+    REQUEST_RETRY_EXCPS,
+    REQUEST_RETRY_HTTP_STATUS_CODES,
+    TuneRequest,
+    __USER_AGENT__,
+    base_class_name,
     build_response_error_details,
     command_line_request_curl,
-    base_class_name,
+    env_usage,
     python_check_version,
     safe_dict,
     safe_str,
-    env_usage,
-    REQUEST_RETRY_EXCPS,
-    REQUEST_RETRY_HTTP_STATUS_CODES,
-    __USER_AGENT__,
 )
-from requests_mv_integrations.support.tune_request import (TuneRequest)
 
 python_check_version(__python_required_version__)
 
@@ -167,6 +169,7 @@ class RequestMvIntegration(object):
         self.logger_format = logger_format
 
         self.tune_request = tune_request
+
         self._requests_logger()
 
         self.timeout = self._REQUEST_CONFIG['timeout']
@@ -379,9 +382,7 @@ class RequestMvIntegration(object):
             )
 
         except (
-            requests.exceptions.ConnectTimeout,
-            requests.exceptions.ReadTimeout,
-            requests.exceptions.Timeout,
+            requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout, requests.exceptions.Timeout,
         ) as ex_req_timeout:
             raise TuneRequestServiceError(
                 error_message="Request: Exception: Timeout",
@@ -399,9 +400,7 @@ class RequestMvIntegration(object):
             )
 
         except (
-            requests.exceptions.ConnectionError,
-            requests.exceptions.ProxyError,
-            requests.exceptions.SSLError,
+            requests.exceptions.ConnectionError, requests.exceptions.ProxyError, requests.exceptions.SSLError,
         ) as ex_req_connect:
             raise TuneRequestModuleError(
                 error_message="Request: Exception: {}".format(base_class_name(ex_req_connect)),
@@ -410,10 +409,7 @@ class RequestMvIntegration(object):
                 error_code=TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT
             )
 
-        except (
-            BrokenPipeError,
-            ConnectionError,
-        ) as ex_ose_connect:
+        except (BrokenPipeError, ConnectionError,) as ex_ose_connect:
             raise TuneRequestModuleError(
                 error_message="Request: Exception: OSE {}".format(base_class_name(ex_ose_connect)),
                 errors=ex_ose_connect,
@@ -957,6 +953,8 @@ class RequestMvIntegration(object):
             response = self.tune_request.request(**kwargs)
 
         except Exception as ex:
+            print_traceback(ex)
+
             self.logger.error(
                 "Send Request: Request Base: Error",
                 extra={

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#  @copyright 2016 TUNE, Inc. (http://www.tune.com)
+#  @copyright 2017 TUNE, Inc. (http://www.tune.com)
 #  @namespace requests_mv_integrations
 
 import sys
@@ -30,9 +30,7 @@ HEADER_USER_AGENT = \
     {'User-Agent': __USER_AGENT__}
 
 REQUEST_RETRY_EXCPS = (
-    requests.exceptions.ConnectTimeout,
-    requests.exceptions.ReadTimeout,
-    requests.exceptions.Timeout,
+    requests.exceptions.ConnectTimeout, requests.exceptions.ReadTimeout, requests.exceptions.Timeout,
 )
 
 REQUEST_RETRY_HTTP_STATUS_CODES = [

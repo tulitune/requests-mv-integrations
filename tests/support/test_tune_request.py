@@ -4,18 +4,32 @@
 #  @namespace requests_mv_integration
 
 import pytest
-from requests_mv_integrations.support import (TuneRequest, Singleton)
-from requests.exceptions import RetryError
+import requests
+import requests_mv_integrations
 
 
-def setup_function():
-    Singleton._instances = {}
+def test_request():
+    request_object = requests_mv_integrations.support.TuneRequest()
+    assert isinstance(request_object, requests_mv_integrations.support.TuneRequest)
+    assert isinstance(request_object.session, requests.Session)
 
 
-def test_singleton():
-    request_object = TuneRequest()
-    request_object2 = TuneRequest()
-    assert request_object.session is request_object2.session
+def test_session():
+    request_session = requests.Session()
+    assert isinstance(request_session, requests.Session)
+    request_object = requests_mv_integrations.support.TuneRequest(session=request_session)
+    assert request_object.session is request_session
+
+
+def test_session_not_same():
+    request_object = requests_mv_integrations.support.TuneRequest()
+    assert isinstance(request_object, requests_mv_integrations.support.TuneRequest)
+    request_object2 = requests_mv_integrations.support.TuneRequest()
+    assert isinstance(request_object2, requests_mv_integrations.support.TuneRequest)
+    assert request_object is not request_object2
+    assert isinstance(request_object.session, requests.Session)
+    assert isinstance(request_object2.session, requests.Session)
+    assert request_object.session is not request_object2.session
 
 
 @pytest.mark.parametrize(
@@ -23,15 +37,12 @@ def test_singleton():
     (500, 501, 502),
 )
 def test_retries_throws_error(retry_code):
-    obj = TuneRequest(retry_codes=[retry_code])
-    with pytest.raises(RetryError):
+    obj = requests_mv_integrations.support.TuneRequest(retry_codes=[retry_code])
+    with pytest.raises(requests.exceptions.RetryError):
         obj.request('GET', "http://localhost:8998/status/" + str(retry_code))
 
 
-@pytest.mark.parametrize("retry_code, status", (
-    (501, 500),
-    (502, 503),
-))
+@pytest.mark.parametrize("retry_code, status", ((501, 500), (502, 503),))
 def test_no_retries(retry_code, status):
-    obj = TuneRequest(retry_codes=[retry_code])
+    obj = requests_mv_integrations.support.TuneRequest(retry_codes=[retry_code])
     obj.request('GET', "http://localhost:8998/status/" + str(status))

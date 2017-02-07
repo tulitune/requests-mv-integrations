@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#  @copyright 2016 TUNE, Inc. (http://www.tune.com)
+#  @copyright 2017 TUNE, Inc. (http://www.tune.com)
 #  @namespace requests_mv_integrations
 
 import logging
@@ -20,7 +20,9 @@ from pprintpp import pprint
 
 from requests_mv_integrations import (__python_required_version__)
 from requests_mv_integrations.errors import (get_exception_message, TuneRequestErrorCodes)
-from requests_mv_integrations.exceptions.custom import (TuneRequestModuleError,)
+from requests_mv_integrations.exceptions.custom import (
+    TuneRequestModuleError,
+)
 from requests_mv_integrations.support import (
     base_class_name,
     bytes_to_human,

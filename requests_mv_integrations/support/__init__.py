@@ -4,7 +4,6 @@
 #  @namespace requests_mv_integrations
 
 from .bom_encoding import (
-    get_bom_encoding,
     detect_bom,
     get_bom_encoding,
     remove_bom,
@@ -34,26 +33,25 @@ from .safe_cast import (
     safe_str,
 )
 from .response import (
+    build_response_error_details,
     csv_skip_last_row,
+    handle_json_decode_error,
+    requests_response_json,
     requests_response_text_html,
     requests_response_text_xml,
-    validate_response,
     validate_json_response,
-    requests_response_json,
-    build_response_error_details,
-    handle_json_decode_error,
+    validate_response,
 )
 from .tune_request import (TuneRequest)
-from .singleton import (Singleton)
 from .utils import (
     base_class_name,
-    full_class_name,
     bytes_to_human,
+    full_class_name,
     python_check_version,
     urlencode_dict,
 )
 from .usage import (
     disk_usage,
-    mem_usage,
     env_usage,
+    mem_usage,
 )
