@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.04.0 (2017-02-09)
+-------------------
+- Requirements.
+- RetryError
+
 0.03.9 (2017-02-06)
 -------------------
 - TuneRequest is not a Singleton.
