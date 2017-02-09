@@ -10,7 +10,6 @@ import logging
 import os
 import time
 from functools import partial
-# from pprintpp import pprint
 
 import requests
 from logging_mv_integrations import (
@@ -953,7 +952,6 @@ class RequestMvIntegration(object):
             response = self.tune_request.request(**kwargs)
 
         except Exception as ex:
-            print_traceback(ex)
 
             self.logger.error(
                 "Send Request: Request Base: Error",
