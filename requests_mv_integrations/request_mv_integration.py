@@ -913,6 +913,7 @@ class RequestMvIntegration(object):
                     request_method=request_method,
                     request_url=request_url,
                     request_headers=headers,
+                    request_params=request_params,
                     request_data=request_data,
                     request_json=request_json,
                     request_auth=request_auth,

@@ -70,6 +70,16 @@ def command_line_request_curl(
     key_user_agent = 'User-Agent'
     header_user_agent = {key_user_agent: __USER_AGENT__}
 
+    # pprint({
+    #     'request_method': request_method,
+    #     'request_url': request_url,
+    #     'request_headers': request_headers,
+    #     'request_data': request_data,
+    #     'request_params': request_params,
+    #     'request_auth': request_auth,
+    #     'request_json': request_json,
+    # })
+
     if request_method == 'GET':
         if request_params:
             assert request_data is None
@@ -102,7 +112,7 @@ def command_line_request_curl(
 
     request_method = request_method.upper()
 
-    command = ("curl" " --verbose" " -X {request_method}" " -H {headers}" " --connect-timeout {timeout}")
+    command = "curl --verbose -X {request_method} -H {headers} --connect-timeout {timeout}"
 
     if request_allow_redirects:
         command += " -L"
