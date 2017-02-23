@@ -909,6 +909,11 @@ class RequestMvIntegration(object):
 
         try:
             if build_request_curl:
+                # In case no authentication information has been provided,
+                # use session's cookies information, if exists
+                if not request_auth and self.session.cookies and len(self.session.cookies) > 0:
+                    request_auth = self.session.cookies
+
                 self.built_request_curl = command_line_request_curl(
                     request_method=request_method,
                     request_url=request_url,
