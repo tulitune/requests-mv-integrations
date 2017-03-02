@@ -628,7 +628,7 @@ class RequestMvIntegrationDownload(object):
             json_file_content = json_file_r.read()
             try:
                 json_download = json.loads(json_file_content)
-            except json.decoder.JSONDecodeError as json_decode_ex:
+            except ValueError as json_decode_ex:
                 pprint(json_file_content)
 
                 response_extra.update({
