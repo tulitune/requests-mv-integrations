@@ -9,7 +9,7 @@ import datetime as dt
 import gzip
 import http.client as http_client
 import io
-import json
+import ujson as json
 import os
 import re
 import time
