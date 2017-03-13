@@ -92,17 +92,26 @@ def command_line_request_curl(
         if request_params:
             request_url += "?" + urllib.parse.urlencode(request_params)
 
-    if request_auth and isinstance(request_auth, requests.auth.HTTPBasicAuth):
-        username = request_auth.username
-        password = request_auth.password
+    # Handle authentication info
+    request_cookies = None
+    if request_auth:
+        if isinstance(request_auth, requests.auth.HTTPBasicAuth):
+            username = request_auth.username
+            password = request_auth.password
 
-        header_basic_auth = {'Authorization': _basic_auth_str(username, password)}
+            header_basic_auth = {'Authorization': _basic_auth_str(username, password)}
 
-        if request_headers:
-            if 'Authorization' not in request_headers:
-                request_headers.update(header_basic_auth)
-        else:
-            request_headers = header_basic_auth
+            if request_headers:
+                if 'Authorization' not in request_headers:
+                    request_headers.update(header_basic_auth)
+            else:
+                request_headers = header_basic_auth
+        elif isinstance(request_auth, requests.cookies.RequestsCookieJar):
+            cookies_str_list = list()
+            for k, v in request_auth.iteritems():
+                cookies_str_list.append('{}={}'.format(k,v))
+            if cookies_str_list:
+                request_cookies = ' --cookie "' + ' '.join(cookies_str_list) + '"'
 
     if request_headers:
         if key_user_agent not in request_headers:
@@ -113,6 +122,9 @@ def command_line_request_curl(
     request_method = request_method.upper()
 
     command = "curl --verbose -X {request_method} -H {headers} --connect-timeout {timeout}"
+
+    if request_cookies:
+        command += request_cookies
 
     if request_allow_redirects:
         command += " -L"
@@ -238,6 +250,7 @@ def parse_curl(curl_command):
     parser.add_argument('-H', '--header', action='append', default=[])
     parser.add_argument('--compressed', action='store_true')
     parser.add_argument('--connect-timeout', default=None)
+    parser.add_argument('--cookie', default=None)
 
     tokens = shlex.split(curl_command)
     parsed_args = parser.parse_args(tokens)

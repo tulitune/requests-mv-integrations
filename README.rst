@@ -16,10 +16,6 @@ Overview
     * - package
       - |version| |supported-versions| |requires|
 
-.. |docs| image:: https://readthedocs.org/projects/requests-mv-integrations/badge/?style=flat
-    :alt: Documentation Status
-    :target: https://readthedocs.org/projects/requests-mv-integrations
-
 .. |license| image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :alt: License Status
     :target: https://opensource.org/licenses/MIT
