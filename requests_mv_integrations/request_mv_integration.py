@@ -5,7 +5,7 @@
 
 import copy
 import datetime as dt
-import json
+import ujson as json
 import logging
 import os
 import time
