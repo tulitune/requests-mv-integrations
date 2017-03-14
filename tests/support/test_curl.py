@@ -270,7 +270,7 @@ _test_command_line_request_curl_post = [
             "--data {request_json} "
             "'https://api.partner.com/endpoint'"
         ).format(module_version=__MODULE_VERSION__, python_version=__PYTHON_VERSION__,
-                 request_json="'{\"type\": \"campaigns\"}'"),
+                 request_json="'{\"type\":\"campaigns\"}'"),
         False,
     ),
 ]
