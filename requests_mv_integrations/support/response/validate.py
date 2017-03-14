@@ -31,7 +31,7 @@ from requests_mv_integrations.support.utils import (
     base_class_name,
     python_check_version,
 )
-from requests_mv_integrations.support.safe_cast import (
+from safe_cast import (
     safe_int,
     safe_str,
 )

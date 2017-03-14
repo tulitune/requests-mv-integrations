@@ -3,6 +3,10 @@
 Release History
 ===============
 
+0.04.2 (2017-02-12)
+-------------------
+- Use of safe_cast package
+
 0.04.1 (2017-02-09)
 -------------------
 - cUrl request params

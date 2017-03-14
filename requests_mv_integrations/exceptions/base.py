@@ -11,12 +11,12 @@ import six
 # from pprintpp import pprint
 
 from requests_mv_integrations import (__title__)
-from requests_mv_integrations.support import (safe_str)
-
 from requests_mv_integrations.errors import (TuneRequestErrorCodes)
 
 from requests_mv_integrations.errors import error_desc as tune_request_error_desc
 from requests_mv_integrations.errors import error_name as tune_request_error_name
+
+from safe_cast import safe_str
 
 
 # @brief TUNE Requests Base Exception

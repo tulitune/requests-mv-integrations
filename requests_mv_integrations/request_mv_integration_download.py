@@ -31,12 +31,12 @@ from requests_mv_integrations.support import (
     handle_json_decode_error,
     python_check_version,
     remove_bom,
-    safe_dict,
     validate_response,
     env_usage,
 )
 from requests_mv_integrations.support.curl import command_line_request_curl
 from .request_mv_integration import (RequestMvIntegration)
+from safe_cast import safe_dict
 
 log = logging.getLogger(__name__)
 
