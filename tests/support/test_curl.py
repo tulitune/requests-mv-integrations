@@ -285,6 +285,7 @@ _all_tests_params = (
     _test_command_line_request_curl_put
 )
 
+
 @pytest.mark.parametrize(
     "request_method, request_url, request_headers, request_params, request_data, "
     "request_auth, request_json, curl_expected, is_check_lenghth_only",
