@@ -16,9 +16,13 @@ response_ok.status_code = codes.ok
 response_bad = Response()
 response_bad.status_code = codes.bad
 
-_test_validate_responce_input_output = [('response_ok', True), ('response_bad', False)]
+_test_validate_response_input_output = [
+    ('response_ok', True),
+    ('response_bad', False),
+    ('response_ok_with_no_text', True)
+]
 
-_test_validate_json_responce_input_output = [
+_test_validate_json_response_input_output = [
     ('response_ok_no_headers', TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_CONTENT_TYPE_RETURNED),
     ('response_bad', TuneRequestModuleError, TuneRequestErrorCodes.REQ_ERR_SOFTWARE),
     ('response_ok_with_valid_json_content', None, None),
@@ -34,7 +38,7 @@ _test_validate_json_responce_input_output = [
 ]
 
 
-@pytest.mark.parametrize("response, expected", _test_validate_responce_input_output)
+@pytest.mark.parametrize("response, expected", _test_validate_response_input_output)
 def test_validate_response(response, expected, responses_dict):
     res = True
     try:
@@ -50,7 +54,7 @@ def test_validate_response(response, expected, responses_dict):
 
 @pytest.mark.parametrize(
     "request_response, expected_exception_type, expected_exception_error_code",
-    _test_validate_json_responce_input_output
+    _test_validate_json_response_input_output
 )
 def test_validate_json_response(
     request_response,
@@ -63,7 +67,11 @@ def test_validate_json_response(
     try:
         validate_json_response(
             response=responses_dict[request_response],
-            request_curl="curl --verbose -X GET -H 'Content-Type: application/json' -H 'User-Agent: (requests-mv-integrations/0.2.2, Python/3.5.2)' --connect-timeout 60 -L -G --data 'apiKey=abcdefg-10hi-42j9-kl31-m0no5p35qr72' --data 'type=byoffer' --data 'fromDate=2016-08-12' --data 'toDate=2016-08-12' 'http://dashboard.unittests.com/dashboardapi/unittestsreports'",
+            request_curl="curl --verbose -X GET -H 'Content-Type: application/json' -H 'User-Agent: "
+                         "(requests-mv-integrations/0.2.2, Python/3.5.2)' --connect-timeout 60 -L -G --data "
+                         "'apiKey=abcdefg-10hi-42j9-kl31-m0no5p35qr72' --data 'type=byoffer' --data "
+                         "'fromDate=2016-08-12' --data 'toDate=2016-08-12' "
+                         "'http://dashboard.unittests.com/dashboardapi/unittestsreports'",
             request_label="Unit Testing validate_json_response()",
         )
     except Exception as e:

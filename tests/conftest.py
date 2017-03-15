@@ -4,6 +4,14 @@ import pytest
 from requests.models import Response, codes
 
 
+class EmptyResponse(object):
+
+    def __init__(self):
+        super(EmptyResponse, self).__init__()
+
+        self.status_code = None
+        self.headers = None
+
 @pytest.fixture(scope='module')
 def responses_dict():
     response_types = [
@@ -13,6 +21,7 @@ def responses_dict():
         'response_ok_with_invalid_json_content',
         'response_ok_with_valid_html_content',
         'response_ok_with_invalid_html_content',
+        'response_ok_with_no_text',
     ]
 
     responses = dict()
@@ -46,5 +55,8 @@ def responses_dict():
     responses['response_ok_with_invalid_html_content'].status_code = codes.ok
     responses['response_ok_with_invalid_html_content'].headers['Content-Type'] = 'text/html'
     responses['response_ok_with_invalid_html_content']._content = b'Definitely not an HTML'
+
+    responses['response_ok_with_no_text'] = EmptyResponse()
+    responses['response_ok_with_no_text'].status_code = codes.ok
 
     return responses
