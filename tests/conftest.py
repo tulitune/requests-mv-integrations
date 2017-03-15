@@ -10,7 +10,7 @@ class EmptyResponse(object):
         super(EmptyResponse, self).__init__()
 
         self.status_code = None
-        self.headers = None
+        self.headers = {}
 
 @pytest.fixture(scope='module')
 def responses_dict():
@@ -58,5 +58,8 @@ def responses_dict():
 
     responses['response_ok_with_no_text'] = EmptyResponse()
     responses['response_ok_with_no_text'].status_code = codes.ok
+    responses['response_ok_with_no_text'].headers['Content-Type'] = 'application/json'
+    responses['response_ok_with_no_text'].headers['Transfer-Encoding'] = 'chunked'
+    responses['response_ok_with_no_text'].headers['Content-Encoding'] = 'gzip'
 
     return responses
