@@ -4,7 +4,7 @@
 #  @namespace requests_mv_integrations
 
 import re
-import json
+import ujson as json
 import urllib.parse
 from .constants import (__USER_AGENT__)
 from base64 import b64encode

@@ -5,7 +5,7 @@
 
 import copy
 import datetime as dt
-import json
+import ujson as json
 import logging
 import os
 import time
@@ -54,6 +54,9 @@ from requests_mv_integrations.support import (
     command_line_request_curl,
     env_usage,
     python_check_version,
+)
+
+from safe_cast import (
     safe_dict,
     safe_str,
 )

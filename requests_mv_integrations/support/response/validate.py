@@ -3,7 +3,7 @@
 #  @copyright 2017 TUNE, Inc. (http://www.tune.com)
 #  @namespace request_mv_integration
 
-import json
+import ujson as json
 import logging
 
 import bs4
@@ -31,7 +31,7 @@ from requests_mv_integrations.support.utils import (
     base_class_name,
     python_check_version,
 )
-from requests_mv_integrations.support.safe_cast import (
+from safe_cast import (
     safe_int,
     safe_str,
 )
@@ -237,7 +237,7 @@ def requests_response_json(
             'response_details_source': response_details_source,
             'response_content_length': response_content_length
         })
-    except json.decoder.JSONDecodeError as json_decode_ex:
+    except ValueError as json_decode_ex:
         log.error("Validate JSON Response: Failed: JSONDecodeError", extra=response_extra)
 
         data = dump.dump_all(response)

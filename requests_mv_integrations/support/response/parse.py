@@ -4,7 +4,7 @@
 #  @namespace request_mv_integration
 
 import logging
-import json
+import ujson as json
 import xmltodict
 from bs4 import BeautifulSoup
 

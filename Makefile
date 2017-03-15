@@ -221,9 +221,6 @@ run-examples:
 	@echo "======================================================"
 	@$(PYTHON3) examples/example_request.py
 	@echo "======================================================"
-	@echo examples/example_safe_cast.py
-	@echo "======================================================"
-	@$(PYTHON3) examples/example_safe_cast.py
 
 test:
 	py.test tests

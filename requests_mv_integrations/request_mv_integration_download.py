@@ -9,7 +9,7 @@ import datetime as dt
 import gzip
 import http.client as http_client
 import io
-import json
+import ujson as json
 import os
 import re
 import time
@@ -31,12 +31,12 @@ from requests_mv_integrations.support import (
     handle_json_decode_error,
     python_check_version,
     remove_bom,
-    safe_dict,
     validate_response,
     env_usage,
 )
 from requests_mv_integrations.support.curl import command_line_request_curl
 from .request_mv_integration import (RequestMvIntegration)
+from safe_cast import safe_dict
 
 log = logging.getLogger(__name__)
 
@@ -628,7 +628,7 @@ class RequestMvIntegrationDownload(object):
             json_file_content = json_file_r.read()
             try:
                 json_download = json.loads(json_file_content)
-            except json.decoder.JSONDecodeError as json_decode_ex:
+            except ValueError as json_decode_ex:
                 pprint(json_file_content)
 
                 response_extra.update({
