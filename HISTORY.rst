@@ -3,9 +3,19 @@
 Release History
 ===============
 
-0.04.2 (2017-02-12)
+0.04.4 (2017-03-02)
 -------------------
-- Use of safe_cast package
+- use sessions cookies as request_auth
+
+0.04.3 (2017-03-02)
+-------------------
+**Improvements**
+- replace 'json' with 'ujson'
+
+0.04.2 (2017-02-27)
+-------------------
+- psutil
+- Back to Python 3.5
 
 0.04.1 (2017-02-09)
 -------------------

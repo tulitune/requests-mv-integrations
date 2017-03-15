@@ -51,8 +51,8 @@ def validate_response(
 
     Args:
         response:
+        request_curl:
         request_label:
-        request_url:
 
     Returns:
 
@@ -74,9 +74,14 @@ def validate_response(
 
     response_extra.update({'http_status_code': response.status_code})
 
-    if hasattr(response, 'text'):
-        response_text_length = len(response.text)
-        response_extra.update({'response_text_length': response_text_length})
+    # Not using hasattr on purpose
+    # Assuming positive approach will give us speedup since when attribute exists
+    # hasattr takes double the time.
+    # Anyway we use text attribute here to logging purpose only
+    try:
+        response_extra.update({'response_text_length': len(response.text)})
+    except AttributeError:
+        pass
 
     if response.headers:
         if 'Content-Type' in response.headers:
@@ -122,6 +127,7 @@ def validate_json_response(
 
     Args:
         response:
+        request_curl
         request_label:
         response_content_type_expected:
         raise_ex_if_not_json_response:
@@ -138,51 +144,52 @@ def validate_json_response(
 
     response_extra.update({'Content-Type (Expected)': response_content_type_expected})
 
-    if hasattr(response, 'headers'):
+    try:
         response_content_type = response.headers.get('Content-Type', None)
 
-    if response_content_type is not None:
-        is_valid_response_content_type = \
-            response_content_type == response_content_type_expected or \
-            response_content_type.startswith(response_content_type_expected)
+        if response.headers.get('Content-Type', None) is not None:
+            is_valid_response_content_type = \
+                response_content_type == response_content_type_expected or \
+                response_content_type.startswith(response_content_type_expected)
 
-        if is_valid_response_content_type:
-            json_response = requests_response_json(
-                response=response,
-                request_curl=request_curl,
-                request_label=request_label,
-            )
-        elif response_content_type.startswith('text/html'):
-            try:
-                response_content_html_lines = \
-                    requests_response_text_html(
-                        response=response
+            if is_valid_response_content_type:
+                json_response = requests_response_json(
+                    response=response,
+                    request_curl=request_curl,
+                    request_label=request_label,
+                )
+            elif response_content_type.startswith('text/html'):
+                try:
+                    response_content_html_lines = \
+                        requests_response_text_html(
+                            response=response
+                        )
+                except Exception as ex:
+                    raise TuneRequestModuleError(
+                        error_message=request_label,
+                        errors=ex,
+                        error_request_curl=request_curl,
+                        error_code=TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_CONTENT_TYPE_RETURNED
                     )
-            except Exception as ex:
+
                 raise TuneRequestModuleError(
-                    error_message=request_label,
-                    errors=ex,
+                    error_message="Unexpected 'Content-Type': '{}', Expected: '{}'".format(
+                        response_content_type, response_content_type_expected
+                    ),
+                    errors=response_content_html_lines,
+                    error_request_curl=request_curl,
+                    error_code=TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_CONTENT_TYPE_RETURNED
+                )
+            else:
+                raise TuneRequestModuleError(
+                    error_message="Unexpected 'Content-Type': '{}', Expected: '{}'".format(
+                        response_content_type, response_content_type_expected
+                    ),
                     error_request_curl=request_curl,
                     error_code=TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_CONTENT_TYPE_RETURNED
                 )
 
-            raise TuneRequestModuleError(
-                error_message="Unexpected 'Content-Type': '{}', Expected: '{}'".format(
-                    response_content_type, response_content_type_expected
-                ),
-                errors=response_content_html_lines,
-                error_request_curl=request_curl,
-                error_code=TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_CONTENT_TYPE_RETURNED
-            )
-        else:
-            raise TuneRequestModuleError(
-                error_message="Unexpected 'Content-Type': '{}', Expected: '{}'".format(
-                    response_content_type, response_content_type_expected
-                ),
-                error_request_curl=request_curl,
-                error_code=TuneRequestErrorCodes.REQ_ERR_UNEXPECTED_CONTENT_TYPE_RETURNED
-            )
-    else:
+    except AttributeError:
         raise TuneRequestModuleError(
             error_message="Undefined 'Content-Type'",
             error_request_curl=request_curl,
@@ -209,7 +216,9 @@ def requests_response_json(
 
     Args:
         response:
+        request_curl:
         request_label:
+        raise_ex_if_not_json_response:
 
     Returns:
 
@@ -278,9 +287,9 @@ def build_response_error_details(request_label, request_url, response):
     """Build gather status of Requests' response.
 
     Args:
+        request_label:
         request_url:
         response:
-        response_verbose:
 
     Returns:
 
@@ -378,10 +387,11 @@ def handle_json_decode_error(
     """Handle JSON Decode Error
 
     Args:
-        response_json_decode_error:
+        response_decode_ex:
         response:
         response_extra:
         request_label:
+        request_curl:
 
     Returns:
 
