@@ -3,7 +3,16 @@
 Release History
 ===============
 
-0.04.4 (2017-03-02)
+0.04.6 (2017-03-28)
+-------------------
+- logger-mv-integrations version 0.1.2
+- validate_response() and validate_json_response()
+
+0.04.5 (2017-03-14)
+-------------------
+- smart-cast
+
+0.04.4 (2017-03-12)
 -------------------
 - use sessions cookies as request_auth
 
