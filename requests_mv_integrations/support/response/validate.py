@@ -115,7 +115,7 @@ def validate_response(
             error_code=TuneRequestErrorCodes.REQ_ERR_SOFTWARE
         )
 
-    log.info('{request_label}: Success'.format(request_label=request_label), extra=response_extra)
+    log.debug('{request_label}: Success'.format(request_label=request_label), extra=response_extra)
 
 
 def validate_json_response(
@@ -203,7 +203,7 @@ def validate_json_response(
         'raise_ex_if_not_json_response': raise_ex_if_not_json_response
     })
 
-    log.info('{request_label}: Success: JSON'.format(request_label=request_label), extra=response_extra)
+    log.debug('{request_label}: Success: JSON'.format(request_label=request_label), extra=response_extra,)
 
     return json_response
 
