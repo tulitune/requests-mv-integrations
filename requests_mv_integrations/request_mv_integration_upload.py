@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #  @copyright 2017 TUNE, Inc. (http://www.tune.com)
-#  @namespace requests_mv_integrations
 
 import logging
-
-import requests
 from logging_mv_integrations import (TuneLoggingFormat)
 
-from requests_mv_integrations import (__python_required_version__)
+from requests_mv_integrations import (
+    __python_required_version__,
+    RequestMvIntegration,
+)
 from requests_mv_integrations.errors import (
     get_exception_message,
     print_traceback,
@@ -20,19 +20,17 @@ from requests_mv_integrations.exceptions.custom import (
 )
 from requests_mv_integrations.support import (
     base_class_name,
+    mv_request_retry_excps_func,
     python_check_version,
     REQUEST_RETRY_EXCPS,
     REQUEST_RETRY_HTTP_STATUS_CODES,
 )
-from .request_mv_integration import (RequestMvIntegration)
 
 log = logging.getLogger(__name__)
-
 python_check_version(__python_required_version__)
 
 
 class RequestMvIntegrationUpload(object):
-
     __mv_request = None
 
     def __init__(
@@ -66,25 +64,26 @@ class RequestMvIntegrationUpload(object):
         upload_data_file_path,
         upload_data_file_size,
         is_upload_gzip,
-        request_label,
+        request_label=None,
         upload_timeout=None
     ):
         """Upload File to requested URL.
 
-        Args:
-            upload_request_url:
-            upload_data_file_path:
-            upload_data_file_size:
-            upload_timeout:
-
-        Returns:
-
+        :param upload_request_url:
+        :param upload_data_file_path:
+        :param upload_data_file_size:
+        :param is_upload_gzip:
+        :param request_label:
+        :param upload_timeout:
+        :return:
         """
+        _request_label = 'Request Upload JSON File'
+        request_label = '{}: {}'.format(request_label, _request_label) if request_label is not None else _request_label
+
         request_retry_excps = REQUEST_RETRY_EXCPS
         request_retry_http_status_codes = REQUEST_RETRY_HTTP_STATUS_CODES
 
         upload_request_retry = {"timeout": 60, "tries": -1, "delay": 60}
-
         upload_request_headers = {'Content-Length': '{}'.format(upload_data_file_size)}
 
         if is_upload_gzip:
@@ -103,12 +102,12 @@ class RequestMvIntegrationUpload(object):
             'upload_request_headers': upload_request_headers
         }
 
-        log.info("Request Upload JSON File: Start", extra=upload_extra)
+        log.info('{}: Start'.format(request_label), extra=upload_extra)
 
         try:
             with open(upload_data_file_path, 'rb') as upload_fp:
                 response = self.mv_request.request(
-                    request_method="PUT",
+                    request_method='PUT',
                     request_url=upload_request_url,
                     request_params=None,
                     request_data=upload_fp,
@@ -116,55 +115,65 @@ class RequestMvIntegrationUpload(object):
                     request_headers=upload_request_headers,
                     request_retry_excps=request_retry_excps,
                     request_retry_http_status_codes=request_retry_http_status_codes,
-                    request_retry_excps_func=self._upload_request_retry_excps_func,
+                    request_retry_excps_func=mv_request_retry_excps_func,
                     allow_redirects=False,
                     build_request_curl=False,
                     request_label=request_label
                 )
-        except TuneRequestBaseError as tmv_ex:
 
+        except TuneRequestBaseError as tmv_ex:
             tmv_ex_extra = tmv_ex.to_dict()
             tmv_ex_extra.update({'error_exception': base_class_name(tmv_ex)})
-
-            log.error("Request Upload JSON File: Failed", extra=tmv_ex_extra)
-
+            log.error('{}: Failed'.format(request_label), extra=tmv_ex_extra)
             raise
 
         except Exception as ex:
+            print_traceback(ex)
+
             log.error(
-                "Request Upload JSON File: Failed: Unexpected",
+                '{}: Failed: Unexpected'.format(request_label),
                 extra={'error_exception': base_class_name(ex),
                        'error_details': get_exception_message(ex)}
             )
 
-            print_traceback(ex)
-
             raise TuneRequestModuleError(
-                error_message=("Request Upload JSON File: Failed: Unexpected: {}: {}").format(
-                    base_class_name(ex), get_exception_message(ex)
+                error_message='{}: Failed: Unexpected: {}: {}'.format(
+                    request_label,
+                    base_class_name(ex),
+                    get_exception_message(ex),
                 ),
                 errors=ex,
                 error_code=TuneRequestErrorCodes.REQ_ERR_UPLOAD_DATA
             )
 
-        log.info("Request Upload JSON File: Finished")
-
+        log.info('{}: Finished'.format(request_label))
         return response
 
-    def request_upload_data(self, upload_request_url, upload_data, upload_data_size, upload_timeout=None):
+    def request_upload_data(
+        self,
+        upload_request_url,
+        upload_data,
+        upload_data_size,
+        request_label=None,
+        upload_timeout=None,
+    ):
         """Upload Data to requested URL.
 
-        Args:
-            upload_request_url:
-            upload_data:
-
-        Returns:
-            requests.Response
+        :param upload_request_url:
+        :param upload_data:
+        :param upload_data_size:
+        :param upload_timeout:
+        :return:
         """
+        _request_label = 'Request Upload Data'
+        request_label = '{}: {}'.format(request_label, _request_label) if request_label is not None else _request_label
+
         log.info(
-            "Request Upload JSON Data: Start",
-            extra={'upload_data_size': upload_data_size,
-                   'upload_request_url': upload_request_url}
+            '{}: Start'.format(request_label),
+            extra={
+                'upload_data_size': upload_data_size,
+                'upload_request_url': upload_request_url,
+            }
         )
 
         request_retry_excps = REQUEST_RETRY_EXCPS
@@ -183,107 +192,39 @@ class RequestMvIntegrationUpload(object):
 
         try:
             response = self.mv_request.request(
-                request_method="PUT",
+                request_method='PUT',
                 request_url=upload_request_url,
                 request_params=None,
                 request_data=upload_data,
                 request_retry=upload_request_retry,
                 request_retry_excps=request_retry_excps,
                 request_retry_http_status_codes=request_retry_http_status_codes,
-                request_retry_excps_func=self._upload_request_retry_excps_func,
+                request_retry_excps_func=mv_request_retry_excps_func,
                 request_headers=request_headers,
                 allow_redirects=False,
                 build_request_curl=False,
-                request_label="Upload Data to URL"
+                request_label=request_label
             )
         except TuneRequestBaseError as tmv_ex:
             tmv_ex_extra = tmv_ex.to_dict()
             tmv_ex_extra.update({'error_exception': base_class_name(tmv_ex)})
 
-            log.error("Upload: Failed", extra=tmv_ex_extra)
+            log.error('{}: Failed'.format(request_label), extra=tmv_ex_extra)
             raise
 
         except Exception as ex:
             print_traceback(ex)
 
             log.error(
-                "Upload: Failed: Unexpected",
+                '{}: Failed: Unexpected'.format(request_label),
                 extra={'error_exception': base_class_name(ex),
                        'error_details': get_exception_message(ex)}
             )
             raise TuneRequestModuleError(
-                error_message=("RequestMvIntegration: Failed: {}").format(get_exception_message(ex)),
+                error_message='{}: Failed: {}'.format(request_label, get_exception_message(ex)),
                 errors=ex,
                 error_code=TuneRequestErrorCodes.REQ_ERR_UPLOAD_DATA
             )
 
-        log.info("Request Upload JSON Data: Finished")
-
+        log.info('{}: Finished'.format(request_label))
         return response
-
-    def _upload_request_retry_excps_func(self, excp, request_label):
-        """Upload Request Retry Exception Function
-
-        Args:
-            excp:
-
-        Returns:
-
-        """
-        error_exception = base_class_name(excp)
-        error_details = get_exception_message(excp)
-
-        if isinstance(excp, TuneRequestBaseError):
-            log.debug(
-                "Request Retry: Upload Exception Func",
-                extra={
-                    'request_label': request_label,
-                    'error_exception': error_exception,
-                    'error_details': error_details
-                }
-            )
-        else:
-            log.debug(
-                "Request Retry: Upload Exception Func: Unexpected",
-                extra={
-                    'request_label': request_label,
-                    'error_exception': error_exception,
-                    'error_details': error_details
-                }
-            )
-
-        if isinstance(excp, TuneRequestBaseError) and \
-                excp.error_code == TuneRequestErrorCodes.REQ_ERR_REQUEST_CONNECT:
-            if error_details.find('RemoteDisconnected') >= 0 or \
-                    error_details.find('ConnectionResetError') >= 0:
-                log.debug(
-                    "Request Retry: Upload Exception Func: Retry",
-                    extra={
-                        'request_label': request_label,
-                        'error_exception': error_exception,
-                        'error_details': error_details
-                    }
-                )
-                return True
-
-        if isinstance(excp, requests.exceptions.ConnectionError):
-            if error_details.find('RemoteDisconnected') >= 0 or \
-                    error_details.find('ConnectionResetError') >= 0:
-                log.debug(
-                    "Request Retry: Upload Exception Func: Retry",
-                    extra={
-                        'request_label': request_label,
-                        'error_exception': error_exception,
-                        'error_details': error_details
-                    }
-                )
-                return True
-
-        log.debug(
-            "Request Retry: Upload Exception Func: Not Retry",
-            extra={'request_label': request_label,
-                   'error_exception': error_exception,
-                   'error_details': error_details}
-        )
-
-        return False

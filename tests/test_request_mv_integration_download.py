@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#  @copyright 2017 TUNE, Inc. (http://www.tune.com)
+
 import pytest
 import os
 import tempfile
@@ -93,7 +97,7 @@ class TestRequestMvIntegrationDownload:
         # Converting the generator to a list, causes yielding all rows values.
         csv_as_list = list(
             request_mv_integration_download_object.request_csv_download(
-                request_method="GET",
+                request_method='GET',
                 request_url=test_csv_download_url,
                 tmp_csv_file_name=TMP_CSV_FILE_NAME,
                 tmp_directory=tmpdir,
@@ -112,7 +116,7 @@ class TestRequestMvIntegrationDownload:
         # RequestMvIntegrationDownload.request_json_download(...) should save the content of a response to
         # a GET request to <test_json_download_url>, as a json file at <TMP_DIRECTORY>/<TMP_JSON_FILE_NAME>
         request_mv_integration_download_object.request_json_download(
-            request_method="GET",
+            request_method='GET',
             request_url=test_json_download_url,
             tmp_json_file_name=TMP_JSON_FILE_NAME,
             tmp_directory=tmpdir,

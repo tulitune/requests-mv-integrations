@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #  @copyright 2017 TUNE, Inc. (http://www.tune.com)
-#  @namespace requests_mv_integrations
 
 import logging
 
@@ -32,7 +31,7 @@ log.info("Start")
 
 result = \
     tune_requests_mv_intgs.request(
-        request_method="GET",
+        request_method='GET',
         request_url=URL_TUNE_MAT_API_COUNTRIES,
         request_params=None,
         request_retry=None,

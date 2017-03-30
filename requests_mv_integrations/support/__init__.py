@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #  @copyright 2017 TUNE, Inc. (http://www.tune.com)
-#  @namespace requests_mv_integrations
 
 from .bom_encoding import (
     detect_bom,
@@ -35,7 +34,8 @@ from .response import (
     validate_json_response,
     validate_response,
 )
-from .tune_request import (TuneRequest)
+from .retry_exception import mv_request_retry_excps_func
+from .tune_request import TuneRequest
 from .utils import (
     base_class_name,
     bytes_to_human,

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #  @copyright 2017 TUNE, Inc. (http://www.tune.com)
-#  @namespace requests_mv_integrations
 
 import re
 import ujson as json
@@ -109,7 +108,7 @@ def command_line_request_curl(
         elif isinstance(request_auth, requests.cookies.RequestsCookieJar):
             cookies_str_list = list()
             for k, v in request_auth.iteritems():
-                cookies_str_list.append('{}={}'.format(k,v))
+                cookies_str_list.append('{}={}'.format(k, v))
             if cookies_str_list:
                 request_cookies = ' --cookie "' + ' '.join(cookies_str_list) + '"'
 

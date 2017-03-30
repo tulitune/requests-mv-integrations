@@ -1,16 +1,19 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+#  @copyright 2017 TUNE, Inc. (http://www.tune.com)
+
 import pytest
 
 from requests.models import Response, codes
 
 
 class EmptyResponse(object):
-
     def __init__(self):
         super(EmptyResponse, self).__init__()
 
         self.status_code = None
         self.headers = {}
+
 
 @pytest.fixture(scope='module')
 def responses_dict():
