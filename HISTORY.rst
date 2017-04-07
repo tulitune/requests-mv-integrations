@@ -3,6 +3,10 @@
 Release History
 ===============
 
+00.05.00 (2017-04-07)
+---------------------
+- support client side certificate
+
 00.04.09 (2017-04-01)
 ---------------------
 - Requirements.

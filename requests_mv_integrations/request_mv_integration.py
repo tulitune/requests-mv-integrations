@@ -229,6 +229,7 @@ class RequestMvIntegration(object):
         request_retry_excps_func=None,
         request_headers=None,
         request_auth=None,
+        request_cert=None,
         cookie_payload=None,
         build_request_curl=True,
         allow_redirects=True,
@@ -331,6 +332,7 @@ class RequestMvIntegration(object):
             'request_json': request_json,
             'request_headers': request_headers,
             'request_auth': request_auth,
+            'request_cert': request_cert,
             'cookie_payload': cookie_payload,
             'request_label': request_label,
             'timeout': timeout,
@@ -357,9 +359,6 @@ class RequestMvIntegration(object):
             self.request_retry_excps = request_retry_excps
 
         extra_request = copy.copy(kwargs)
-
-        if request_retry:
-            extra_request.update({'request_retry': request_retry})
 
         if request_label:
             extra_request.update({'request_label': request_label})
@@ -893,6 +892,7 @@ class RequestMvIntegration(object):
         request_json=None,
         request_headers=None,
         request_auth=None,
+        request_cert=None,
         cookie_payload=None,
         request_label=None,
         timeout=60,
@@ -916,6 +916,7 @@ class RequestMvIntegration(object):
             request_headers: (optional) Dictionary of HTTP Headers to send
                 with the :class:`Request`.
             request_auth: (optional) Auth tuple to enable Basic/Digest/Custom HTTP Auth.
+            request_cert: (optional) Cert tuple to enable Client side certificates.
             timeout: (optional) How long to wait for the server to send data
                 before giving up.
             allow_redirects: (optional) Boolean. Set to True if POST/PUT/DELETE
@@ -982,6 +983,9 @@ class RequestMvIntegration(object):
 
         if request_auth:
             kwargs.update({'auth': request_auth})
+
+        if request_cert:
+            kwargs.update({'cert': request_cert})
 
         if timeout and isinstance(timeout, int):
             kwargs.update({'timeout': timeout})
