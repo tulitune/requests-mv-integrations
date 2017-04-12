@@ -5,16 +5,18 @@
 import pytest
 import os
 import tempfile
-
-tmpdir = tempfile.mkdtemp()
-
+import csv
+from os import sep
+from subprocess import Popen, PIPE
 from .resources.mockserver import (run_server, HTTP_SERVER_PORT, StaticFilesHandler)
 from requests_mv_integrations import (
     RequestMvIntegrationDownload,
 )
-import csv
-from os import sep
-from subprocess import Popen, PIPE
+from requests_mv_integrations.exceptions.custom import (
+    TuneRequestModuleError,
+)
+
+tmpdir = tempfile.mkdtemp()
 
 __all__ = [run_server]
 
@@ -91,6 +93,7 @@ def compare_csv_files(file_path_1, file_path_2):
 
 
 class TestRequestMvIntegrationDownload:
+
     def test_request_csv_download(self, request_mv_integration_download_object, run_server):
         # RequestMvIntegrationDownload.request_csv_download(...) returns a
         # generator containing CSV data by rows in JSON dictionary format.
@@ -111,6 +114,49 @@ class TestRequestMvIntegrationDownload:
 
         # Now, check that the content of the list of csv dictionary rows, is correct
         assert (compare_csv_file_to_csv_list(StaticFilesHandler.csv_file_name(), csv_as_list))
+
+    @pytest.mark.parametrize(
+        'read_first_row, skip_last_row, skip_first_row', (
+                (True, False, False),
+                (False, True, False),
+                (False, False, True),
+        )
+    )
+    def test_request_csv_download_special(self, request_mv_integration_download_object,
+                                  read_first_row, skip_last_row, skip_first_row, run_server):
+        # RequestMvIntegrationDownload.request_csv_download(...) returns a
+        # generator containing CSV data by rows in JSON dictionary format.
+        # Converting the generator to a list, causes yielding all rows values.
+        csv_as_list = list(
+            request_mv_integration_download_object.request_csv_download(
+                request_method='GET',
+                request_url=test_csv_download_url,
+                tmp_csv_file_name=TMP_CSV_FILE_NAME,
+                tmp_directory=tmpdir,
+                read_first_row=read_first_row,
+                skip_first_row=skip_first_row,
+                skip_last_row=skip_last_row
+            )
+        )
+
+        assert csv_as_list is not None
+
+    def test_request_csv_download_fail(self, request_mv_integration_download_object, run_server):
+        # RequestMvIntegrationDownload.request_csv_download(...) returns a
+        # generator containing CSV data by rows in JSON dictionary format.
+        # Converting the generator to a list, causes yielding all rows values.
+        csv_as_list = None
+        with pytest.raises(TuneRequestModuleError) as info:
+            csv_as_list = list(
+                request_mv_integration_download_object.request_csv_download(
+                    request_method='GET',
+                    request_url="bad url",
+                    tmp_csv_file_name=TMP_CSV_FILE_NAME,
+                    tmp_directory=tmpdir,
+                )
+            )
+        assert csv_as_list is None
+        assert "Invalid URL" in str(info.value)
 
     def test_request_json_download(self, request_mv_integration_download_object, run_server):
         # RequestMvIntegrationDownload.request_json_download(...) should save the content of a response to
