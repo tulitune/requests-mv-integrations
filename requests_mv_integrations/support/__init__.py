@@ -48,3 +48,4 @@ from .usage import (
     env_usage,
     mem_usage,
 )
+from .metrics import Metrics

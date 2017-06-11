@@ -54,6 +54,7 @@ from requests_mv_integrations.support import (
     env_usage,
     mv_request_retry_excps_func,
     python_check_version,
+    Metrics,
 )
 
 from safe_cast import (
@@ -93,6 +94,11 @@ class RequestMvIntegration(object):
 
     __built_request_curl = None
     __logger = None
+
+    _metrics = Metrics()
+
+    def export_metrics_in_statsd_format(self):
+        return self._metrics.dict()
 
     @property
     def built_request_curl(self):
@@ -609,6 +615,8 @@ class RequestMvIntegration(object):
 
             _tries -= 1
 
+            time_start_req = dt.datetime.now()
+
             to_raise_exception, to_return_response = self.try_send_request(
                 _attempts,
                 _tries,
@@ -618,10 +626,21 @@ class RequestMvIntegration(object):
                 request_label=request_label,
             )
 
+            time_end_req = dt.datetime.now()
+            diff_req = time_end_req - time_start_req
+            latency = diff_req.total_seconds()
+
+            self._metrics.inc('api_request.count')
+            self._metrics.add_sample('api_request.latency', latency)
+
             if to_raise_exception:
+                self._metrics.add_sample('api_request.response_size', 0)
+                self._metrics.inc('api_request.failure')
                 raise to_raise_exception
 
             if to_return_response:
+                #self._metrics.add_sample('api_request.response_size', len(to_return_response.content))
+                self._metrics.inc('api_request.success')
                 return to_return_response
 
             self.logger.info(

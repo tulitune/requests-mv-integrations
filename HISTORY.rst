@@ -3,11 +3,15 @@
 Release History
 ===============
 
+00.05.01 (2017-06-15)
+---------------------
+- Collect metrics for MvRequest calls
+
 00.05.00 (2017-04-07)
 ---------------------
 - support client side certificate
 
-00.04.09 (2017-04-01)
+00.04.09 (2017-04-01)q
 ---------------------
 - Requirements.
 
