@@ -3,6 +3,10 @@
 Release History
 ===============
 
+00.05.02 (2017-06-15)
+---------------------
+- Requirements.txt - update python packages to latest
+
 00.05.01 (2017-06-15)
 ---------------------
 - Collect metrics for MvRequest calls
