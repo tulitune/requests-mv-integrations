@@ -52,7 +52,6 @@ from requests_mv_integrations.support import (
     build_response_error_details,
     command_line_request_curl,
     env_usage,
-    mv_request_retry_excps_func,
     python_check_version,
     Metrics,
 )
