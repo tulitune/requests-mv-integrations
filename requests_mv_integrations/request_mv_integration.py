@@ -350,13 +350,11 @@ class RequestMvIntegration(object):
 
         time_start_req = dt.datetime.now()
 
-        if request_retry_func is None:
-            request_retry_func = self.request_retry_func
+        if request_retry_func is not None:
+            self.request_retry_func = request_retry_func
 
-        if request_retry_excps_func is None:
-            request_retry_excps_func = self.request_retry_excps_func
-            if request_retry_excps_func is None:
-                request_retry_excps_func = mv_request_retry_excps_func
+        if request_retry_excps_func is not None:
+            self.request_retry_excps_func = request_retry_excps_func
 
         if request_retry_http_status_codes is not None:
             self.request_retry_http_status_codes = request_retry_http_status_codes

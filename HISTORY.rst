@@ -3,6 +3,10 @@
 Release History
 ===============
 
+00.05.03 (2017-08-13)
+---------------------
+- Fix Retry exception functions
+
 00.05.02 (2017-06-15)
 ---------------------
 - Requirements.txt - update python packages to latest
