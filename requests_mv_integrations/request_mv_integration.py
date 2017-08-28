@@ -12,8 +12,6 @@ from functools import partial
 
 import requests
 from logging_mv_integrations import (
-    TuneLoggingFormat,
-    TuneLoggingHandler,
     get_logger,
 )
 from pyhttpstatus_utils import (
@@ -168,16 +166,14 @@ class RequestMvIntegration(object):
 
     def __init__(
         self,
-        logger_level=logging.INFO,
-        logger_format=TuneLoggingFormat.JSON,
+        logger_level=None,
+        logger_format=None,
         tune_request=None,
     ):
         self.logger_level = logger_level
         self.logger_format = logger_format
 
         self.tune_request = tune_request
-
-        self._requests_logger()
 
         self.timeout = self._REQUEST_CONFIG['timeout']
         self.retry_delay = self._REQUEST_CONFIG['delay']
@@ -186,23 +182,6 @@ class RequestMvIntegration(object):
         self.retry_max_delay = None
         self.retry_backoff = 0
         self.retry_jitter = 0
-
-    def _requests_logger(self):
-        """Set logging format to package 'requests'"""
-        if self.logger:
-            request_logger_level = self.logger_level
-
-            if request_logger_level == logging.INFO:
-                request_logger_level = logging.WARNING
-
-            tune_loggin_handler = TuneLoggingHandler(logger_format=self.logger_format)
-
-            tune_loggin_handler.add_logger_version('requests', requests.__version__)
-
-            requests_logger = logging.getLogger('requests')
-            requests_logger.addHandler(tune_loggin_handler.log_handler)
-            requests_logger.propagate = True
-            requests_logger.setLevel(level=request_logger_level)
 
     def _prep_request_retry(self, request_retry=None, request_retry_http_status_codes=None):
         self.timeout = self._REQUEST_CONFIG['timeout']
