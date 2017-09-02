@@ -14,6 +14,9 @@ import requests
 from logging_mv_integrations import (
     get_logger,
 )
+from logging_mv_integrations import (
+    TuneLoggingFormat
+)
 from pyhttpstatus_utils import (
     HttpStatusType,
     http_status_code_to_desc,
@@ -166,8 +169,8 @@ class RequestMvIntegration(object):
 
     def __init__(
         self,
-        logger_level=None,
-        logger_format=None,
+        logger_level=logging.INFO,
+        logger_format=TuneLoggingFormat.JSON,
         tune_request=None,
     ):
         self.logger_level = logger_level
