@@ -3,6 +3,10 @@
 Release History
 ===============
 
+00.05.04 (2017-09-12)
+---------------------
+- Support logging-mv-integrations refactor
+
 00.05.03 (2017-08-13)
 ---------------------
 - Fix Retry exception functions
