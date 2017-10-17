@@ -378,10 +378,12 @@ class TestRequestMvIntegration:
         """
         try:
             request_mv_integration_object.request('GET', 'http://localhost:8998/status/' + str(tested_http_response))
-        except Exception as ex:
+        except TuneRequestBaseError as ex:
             assert ex.error_code == tested_http_response, "Expected: {}, Actual: {}".format(
                 tested_http_response, ex.error_code
             )
+        except Exception:
+            assert tested_http_response in [429, 500, 502, 503, 504]
 
     def test_request_raised_exceptions_method_none(self, request_mv_integration_object):
         """
